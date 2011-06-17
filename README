@@ -1,0 +1,56 @@
+================================================================================
+ bindata
+================================================================================
+
+This tool converts any file into managable Go source code. Useful for embedding
+binary data into a go program. The file data is gzip compressed before being
+converted to a raw byte slice.
+
+If gofmt is available on the system, bindata will invoke it to format the
+generated go file.
+
+================================================================================
+ DEPENDENCIES
+================================================================================
+
+ n/a
+
+================================================================================
+ USAGE
+================================================================================
+
+    $ goinstall github.com/jteeuwen/go-bindata
+
+ The simplest invocation is to pass it only the input file name.
+ The output file and code settings are inferred from this automatically.
+
+    $ bindata -i testdata/gophercolor.png
+    [w] No output file specified. Using 'testdata/gophercolor.png.go'.
+    [w] No package name specified. Using 'main'.
+    [w] No function name specified. Using 'gophercolor_png'.
+    [i] Done.
+
+ This creates the "testdata/gophercolor.png.go" file which has a package
+ declaration with name 'main' and one function named 'gophercolor_png'.
+ It looks like this:
+
+     func gophercolor_png() ([]byte, os.Error) {
+          var gz *gzip.Decompressor
+          var err os.Error
+          if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{
+              ...
+          })); err != nil {
+              return nil, err
+          }
+
+          var b bytes.Buffer
+          io.Copy(&b, gz)
+          gz.Close()
+          return b.Bytes(), nil
+     }
+
+ You can now simply include the new .go file in your program and call
+ gophercolor_png() to get the uncompressed image data.
+
+ Invoke the program with the -h flag for more options.
+
