@@ -1,5 +1,3 @@
-// auto generated from 'testdata/gophercolor.png'.
-
 package main
 
 import (

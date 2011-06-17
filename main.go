@@ -15,11 +15,11 @@ import (
 
 const (
 	APP_NAME    = "bindata"
-	APP_VERSION = "0.2"
+	APP_VERSION = "0.3"
 )
 
 func main() {
-	in := flag.String("i", "", "Path to the input file.")
+	in := flag.String("i", "", "Path to the input file. Alternatively, pipe the file data into stdin.")
 	out := flag.String("o", "", "Optional path to the output file.")
 	pkgname := flag.String("p", "", "Optional name of the package to generate.")
 	funcname := flag.String("f", "", "Optional name of the function to generate.")
@@ -33,12 +33,9 @@ func main() {
 		return
 	}
 
-	if len(*in) == 0 {
-		fmt.Fprintln(os.Stderr, "[e] No input file specified.")
-		os.Exit(1)
-	}
+	pipe := len(*in) == 0
 
-	if len(*out) == 0 {
+	if !pipe && len(*out) == 0 {
 		// Ensure we create our own output filename that does not already exist.
 		dir, file := path.Split(*in)
 
@@ -67,27 +64,57 @@ func main() {
 	}
 
 	if len(*funcname) == 0 {
-		_, file := path.Split(*in)
-		file = strings.ToLower(file)
-		file = strings.Replace(file, " ", "_", -1)
-		file = strings.Replace(file, ".", "_", -1)
-		file = strings.Replace(file, "-", "_", -1)
-		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
-		*funcname = file
+		if pipe {
+			// Can't infer from input file name in this mode.
+			fmt.Fprintln(os.Stderr, "[e] No function name specified.")
+			os.Exit(1)
+		} else {
+			_, file := path.Split(*in)
+			file = strings.ToLower(file)
+			file = strings.Replace(file, " ", "_", -1)
+			file = strings.Replace(file, ".", "_", -1)
+			file = strings.Replace(file, "-", "_", -1)
+			fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
+			*funcname = file
+		}
 	}
 
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
-	if err := translate(*in, *out, *pkgname, *funcname); err != nil {
-		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-		return
-	}
+	var err os.Error
+	if pipe {
+		if err = translate(os.Stdin, os.Stdout, *pkgname, *funcname); err != nil {
+			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+			return
+		}
+	} else {
+		var fs, fd *os.File
 
-	// If gofmt exists on the system, use it to format the generated source file.
-	if err := gofmt(*out); err != nil {
-		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-		os.Exit(1)
-	}
+		if fs, err = os.Open(*in); err != nil {
+			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+			return
+		}
+		
+		defer fs.Close()
 
-	fmt.Fprintln(os.Stdout, "[i] Done.")
+		if fd, err = os.Create(*out); err != nil {
+			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+			return
+		}
+		
+		defer fd.Close()
+
+		if err = translate(fs, fd, *pkgname, *funcname); err != nil {
+			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+			return
+		}
+
+		// If gofmt exists on the system, use it to format the generated source file.
+		if err = gofmt(*out); err != nil {
+			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+			return
+		}
+
+		fmt.Fprintln(os.Stdout, "[i] Done.")
+	}
 }

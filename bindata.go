@@ -28,40 +28,25 @@ func gofmt(file string) (err os.Error) {
 
 // Translate the input file.
 // input -> gzip -> gowriter -> output.
-func translate(input, output, pkgname, funcname string) (err os.Error) {
-	var fs, fd *os.File
+func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err os.Error) {
 	var gz *gzip.Compressor
 
-	if fs, err = os.Open(input); err != nil {
-		return
-	}
-
-	defer fs.Close()
-
-	if fd, err = os.Create(output); err != nil {
-		return
-	}
-
-	defer fd.Close()
-
-	fmt.Fprintf(fd, `// auto generated from '%s'.
-
-package %s
+	fmt.Fprintf(output, `package %s
 import ( "io"; "os"; "bytes"; "compress/gzip" )
 
 func %s() ([]byte, os.Error) {
 var gz *gzip.Decompressor
 var err os.Error
-if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, input, pkgname, funcname)
+if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
 
-	if gz, err = gzip.NewWriter(&GoWriter{Writer: fd}); err != nil {
+	if gz, err = gzip.NewWriter(&GoWriter{Writer: output}); err != nil {
 		return
 	}
 
-	io.Copy(gz, fs)
+	io.Copy(gz, input)
 	gz.Close()
 
-	fmt.Fprint(fd, `
+	fmt.Fprint(output, `
 })); err != nil {
 	return nil, err
 }

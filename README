@@ -51,8 +51,14 @@ generated go file.
 
  You can now simply include the new .go file in your program and call
  gophercolor_png() to get the uncompressed image data.
-
  See the testdata directory for example input and output.
+
+ Aternatively, you can pipe the input file data into stdin. bindata will then
+ spit out the generated Go code to stdout. This does require explicitly naming
+ the desired function name, as it can not be inferred from the input data.
+ The package name will still default to 'main'.
+ 
+     $ cat testdata/gophercolor.png | ./bindata -f gophercolor_png | gofmt
 
  Invoke the program with the -h flag for more options.
 
