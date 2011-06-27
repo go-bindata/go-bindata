@@ -11,11 +11,12 @@ import (
 	"path"
 	"strings"
 	"runtime"
+	"unicode"
 )
 
 const (
 	APP_NAME    = "bindata"
-	APP_VERSION = "0.3"
+	APP_VERSION = "0.4"
 )
 
 func main() {
@@ -61,6 +62,11 @@ func main() {
 	if len(*pkgname) == 0 {
 		fmt.Fprintln(os.Stderr, "[w] No package name specified. Using 'main'.")
 		*pkgname = "main"
+	} else {
+		if unicode.IsDigit(int((*pkgname)[0])) {
+			// Identifier can't start with a digit.
+			*pkgname = "_" + *pkgname
+		}
 	}
 
 	if len(*funcname) == 0 {
@@ -74,6 +80,10 @@ func main() {
 			file = strings.Replace(file, " ", "_", -1)
 			file = strings.Replace(file, ".", "_", -1)
 			file = strings.Replace(file, "-", "_", -1)
+			if unicode.IsDigit(int(file[0])) {
+				// Identifier can't start with a digit.
+				file = "_" + file
+			}
 			fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
 			*funcname = file
 		}
