@@ -63,7 +63,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "[w] No package name specified. Using 'main'.")
 		*pkgname = "main"
 	} else {
-		if unicode.IsDigit(int((*pkgname)[0])) {
+		if unicode.IsDigit(rune((*pkgname)[0])) {
 			// Identifier can't start with a digit.
 			*pkgname = "_" + *pkgname
 		}
@@ -80,7 +80,7 @@ func main() {
 			file = strings.Replace(file, " ", "_", -1)
 			file = strings.Replace(file, ".", "_", -1)
 			file = strings.Replace(file, "-", "_", -1)
-			if unicode.IsDigit(int(file[0])) {
+			if unicode.IsDigit(rune(file[0])) {
 				// Identifier can't start with a digit.
 				file = "_" + file
 			}
