@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"os"
 )
 
 type GoWriter struct {
@@ -15,7 +14,7 @@ type GoWriter struct {
 	c int
 }
 
-func (this *GoWriter) Write(p []byte) (n int, err os.Error) {
+func (this *GoWriter) Write(p []byte) (n int, err error) {
 	if len(p) == 0 {
 		return
 	}

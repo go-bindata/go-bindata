@@ -91,7 +91,7 @@ func main() {
 
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
-	var err os.Error
+	var err error
 	if pipe {
 		if err = translate(os.Stdin, os.Stdout, *pkgname, *funcname); err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
@@ -104,14 +104,14 @@ func main() {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
-		
+
 		defer fs.Close()
 
 		if fd, err = os.Create(*out); err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
-		
+
 		defer fd.Close()
 
 		if err = translate(fs, fd, *pkgname, *funcname); err != nil {

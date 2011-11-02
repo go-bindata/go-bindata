@@ -15,7 +15,7 @@ import (
 
 // If gofmt exists on the system, run it over the target file to 
 // fix up the generated code. This is not necessary, just a convenience.
-func gofmt(file string) (err os.Error) {
+func gofmt(file string) (err error) {
 	var prog string
 	if prog = os.Getenv("GOBIN"); len(prog) == 0 {
 		return
@@ -28,7 +28,7 @@ func gofmt(file string) (err os.Error) {
 
 // Translate the input file.
 // input -> gzip -> gowriter -> output.
-func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err os.Error) {
+func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err error) {
 	var gz *gzip.Compressor
 
 	fmt.Fprintf(output, `package %s
