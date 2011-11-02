@@ -34,9 +34,9 @@ generated go file.
  declaration with name 'main' and one function named 'gophercolor_png'.
  It looks like this:
 
-     func gophercolor_png() ([]byte, os.Error) {
+     func gophercolor_png() ([]byte, error) {
           var gz *gzip.Decompressor
-          var err os.Error
+          var err error
           if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{
               ...
           })); err != nil {
