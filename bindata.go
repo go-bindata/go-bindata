@@ -5,12 +5,12 @@
 package main
 
 import (
-	"path"
+	"compress/gzip"
 	"fmt"
-	"exec"
 	"io"
 	"os"
-	"compress/gzip"
+	"os/exec"
+	"path"
 )
 
 // If gofmt exists on the system, run it over the target file to 
