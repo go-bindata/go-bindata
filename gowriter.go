@@ -14,19 +14,19 @@ type GoWriter struct {
 	c int
 }
 
-func (this *GoWriter) Write(p []byte) (n int, err error) {
+func (w *GoWriter) Write(p []byte) (n int, err error) {
 	if len(p) == 0 {
 		return
 	}
 
 	for n = range p {
-		if this.c%12 == 0 {
-			this.Writer.Write([]byte{'\n'})
-			this.c = 0
+		if w.c%12 == 0 {
+			w.Writer.Write([]byte{'\n'})
+			w.c = 0
 		}
 
-		fmt.Fprintf(this.Writer, "0x%02x,", p[n])
-		this.c++
+		fmt.Fprintf(w.Writer, "0x%02x,", p[n])
+		w.c++
 	}
 
 	return

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"io"
 	"bytes"
 	"compress/gzip"
+	"io"
 )
 
 func gophercolor_png() ([]byte, error) {

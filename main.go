@@ -5,12 +5,12 @@
 package main
 
 import (
-	"os"
 	"flag"
 	"fmt"
+	"os"
 	"path"
-	"strings"
 	"runtime"
+	"strings"
 	"unicode"
 )
 
@@ -95,7 +95,6 @@ func main() {
 	if pipe {
 		if err = translate(os.Stdin, os.Stdout, *pkgname, *funcname); err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
 		}
 	} else {
 		var fs, fd *os.File
