@@ -19,8 +19,6 @@ generated go file.
  USAGE
 ================================================================================
 
-    $ goinstall github.com/jteeuwen/go-bindata
-
  The simplest invocation is to pass it only the input file name.
  The output file and code settings are inferred from this automatically.
 
