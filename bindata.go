@@ -8,23 +8,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"os"
-	"os/exec"
-	"path"
 )
-
-// If gofmt exists on the system, run it over the target file to 
-// fix up the generated code. This is not necessary, just a convenience.
-func gofmt(file string) (err error) {
-	var prog string
-	if prog = os.Getenv("GOBIN"); len(prog) == 0 {
-		return
-	}
-
-	prog = path.Join(prog, "gofmt")
-	cmd := exec.Command(prog, "-w", file)
-	return cmd.Run()
-}
 
 // Translate the input file.
 // input -> gzip -> gowriter -> output.
@@ -32,12 +16,17 @@ func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err
 	var gz *gzip.Compressor
 
 	fmt.Fprintf(output, `package %s
-import ( "io"; "os"; "bytes"; "compress/gzip" )
 
-func %s() ([]byte, os.Error) {
-var gz *gzip.Decompressor
-var err os.Error
-if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
+import (
+	"bytes"
+	"compress/gzip"
+	"io"
+)
+
+func %s() ([]byte, error) {
+	var gz *gzip.Decompressor
+	var err error
+	if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
 
 	if gz, err = gzip.NewWriter(&GoWriter{Writer: output}); err != nil {
 		return
@@ -47,13 +36,15 @@ if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
 	gz.Close()
 
 	fmt.Fprint(output, `
-})); err != nil {
-	return nil, err
-}
+	})); err != nil {
+		return nil, err
+	}
 
-var b bytes.Buffer
-io.Copy(&b, gz)
-gz.Close()
-return b.Bytes(), nil}`)
+	var b bytes.Buffer
+	io.Copy(&b, gz)
+	gz.Close()
+
+	return b.Bytes(), nil
+}`)
 	return
 }

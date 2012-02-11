@@ -1,23 +1,10 @@
-================================================================================
- bindata
-================================================================================
+## Bindata
 
 This tool converts any file into managable Go source code. Useful for embedding
 binary data into a go program. The file data is gzip compressed before being
 converted to a raw byte slice.
 
-If gofmt is available on the system, bindata will invoke it to format the
-generated go file.
-
-================================================================================
- DEPENDENCIES
-================================================================================
-
- n/a
-
-================================================================================
- USAGE
-================================================================================
+### USAGE
 
  The simplest invocation is to pass it only the input file name.
  The output file and code settings are inferred from this automatically.

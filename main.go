@@ -16,7 +16,7 @@ import (
 
 const (
 	APP_NAME    = "bindata"
-	APP_VERSION = "0.4"
+	APP_VERSION = "0.5"
 )
 
 func main() {
@@ -89,9 +89,10 @@ func main() {
 		}
 	}
 
+	var err error
+
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
-	var err error
 	if pipe {
 		if err = translate(os.Stdin, os.Stdout, *pkgname, *funcname); err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
@@ -114,12 +115,6 @@ func main() {
 		defer fd.Close()
 
 		if err = translate(fs, fd, *pkgname, *funcname); err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
-		}
-
-		// If gofmt exists on the system, use it to format the generated source file.
-		if err = gofmt(*out); err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
