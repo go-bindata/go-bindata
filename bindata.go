@@ -13,8 +13,6 @@ import (
 // Translate the input file.
 // input -> gzip -> gowriter -> output.
 func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err error) {
-	var gz *gzip.Compressor
-
 	fmt.Fprintf(output, `package %s
 
 import (
@@ -28,10 +26,7 @@ func %s() ([]byte, error) {
 	var err error
 	if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
 
-	if gz, err = gzip.NewWriter(&GoWriter{Writer: output}); err != nil {
-		return
-	}
-
+	gz := gzip.NewWriter(&GoWriter{Writer: output})
 	io.Copy(gz, input)
 	gz.Close()
 
