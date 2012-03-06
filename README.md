@@ -20,17 +20,18 @@ converted to a raw byte slice.
  It looks like this:
 
      func gophercolor_png() ([]byte, error) {
-          var gz *gzip.Decompressor
-          var err error
-          if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{
+	      gz, err := gzip.NewReader(bytes.NewBuffer([]byte{
               ...
-          })); err != nil {
+          }))
+          
+          if err != nil {
               return nil, err
           }
 
           var b bytes.Buffer
           io.Copy(&b, gz)
           gz.Close()
+          
           return b.Bytes(), nil
      }
 
