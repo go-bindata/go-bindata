@@ -22,16 +22,16 @@ import (
 )
 
 func %s() ([]byte, error) {
-	var gz *gzip.Decompressor
-	var err error
-	if gz, err = gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
+	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
 
 	gz := gzip.NewWriter(&GoWriter{Writer: output})
 	io.Copy(gz, input)
 	gz.Close()
 
 	fmt.Fprint(output, `
-	})); err != nil {
+	}))
+
+	if err != nil {
 		return nil, err
 	}
 
