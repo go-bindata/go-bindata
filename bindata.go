@@ -21,8 +21,10 @@ import (
 	"io"
 )
 
-func %s() ([]byte, error) {
-	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname)
+// %s returns the decompressed binary data.
+// It panics if an error occurred.
+func %s() []byte {
+	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname, funcname)
 
 	gz := gzip.NewWriter(&GoWriter{Writer: output})
 	io.Copy(gz, input)
@@ -32,14 +34,14 @@ func %s() ([]byte, error) {
 	}))
 
 	if err != nil {
-		return nil, err
+		panic("Decompression failed: " + err.Error())
 	}
 
 	var b bytes.Buffer
 	io.Copy(&b, gz)
 	gz.Close()
 
-	return b.Bytes(), nil
+	return b.Bytes()
 }`)
 	return
 }

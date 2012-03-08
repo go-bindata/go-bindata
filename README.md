@@ -19,24 +19,31 @@ converted to a raw byte slice.
  declaration with name 'main' and one function named 'gophercolor_png'.
  It looks like this:
 
-     func gophercolor_png() ([]byte, error) {
+     // gophercolor_png returns the decompressed binary data.
+     // It panics if an error occurred.
+     func gophercolor_png() []byte {
 	      gz, err := gzip.NewReader(bytes.NewBuffer([]byte{
               ...
           }))
           
           if err != nil {
-              return nil, err
+              panic("Decompression failed: " + err.Error())
           }
 
           var b bytes.Buffer
           io.Copy(&b, gz)
           gz.Close()
           
-          return b.Bytes(), nil
+          return b.Bytes()
      }
 
  You can now simply include the new .go file in your program and call
- gophercolor_png() to get the uncompressed image data.
+ gophercolor_png() to get the uncompressed image data. The function panics
+ if something went wrong during decompression. This makes any faults appearant
+ during initialization of your program, so it can quickly be fixed. Additionally,
+ this approach allows us to assign the decompressed file data to global
+ variables where necessary.
+
  See the testdata directory for example input and output.
 
  Aternatively, you can pipe the input file data into stdin. bindata will then

@@ -6,7 +6,9 @@ import (
 	"io"
 )
 
-func gophercolor_png() ([]byte, error) {
+// gophercolor_png returns the decompressed binary data.
+// It panics if an error occurred.
+func gophercolor_png() []byte {
 	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{
 0x1f,0x8b,0x08,0x00,0x00,0x09,0x6e,0x88,0x00,0xff,0x34,0x9b,
 0x65,0x50,0x1b,0x5f,0x17,0xc6,0x43,0x69,0x8b,0xbb,0xbb,0xbb,
@@ -1837,12 +1839,12 @@ func gophercolor_png() ([]byte, error) {
 	}))
 
 	if err != nil {
-		return nil, err
+		panic("Decompression failed: " + err.Error())
 	}
 
 	var b bytes.Buffer
 	io.Copy(&b, gz)
 	gz.Close()
 
-	return b.Bytes(), nil
+	return b.Bytes()
 }
