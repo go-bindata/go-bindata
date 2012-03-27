@@ -23,8 +23,8 @@ func main() {
 	in := flag.String("i", "", "Path to the input file. Alternatively, pipe the file data into stdin.")
 	out := flag.String("o", "", "Optional path to the output file.")
 	pkgname := flag.String("p", "", "Optional name of the package to generate.")
-	funcname := flag.String("f", "", "Optional name of the function to generate.")
-	uncompressed := flag.Bool("u", false, "The specified resource will /not/ be GZIP compressed when this flag isspecified. This alters the generated output code.")
+	funcname := flag.String("f", "", "Optional name of the function/variable to generate.")
+	uncompressed := flag.Bool("u", false, "The specified resource will /not/ be GZIP compressed when this flag is specified. This alters the generated output code.")
 	version := flag.Bool("v", false, "Display version information.")
 
 	flag.Parse()
