@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	APP_NAME    = "bindata"
-	APP_VERSION = "0.5"
+	AppName    = "bindata"
+	AppVersion = "0.6"
 )
 
 func main() {
@@ -24,13 +24,14 @@ func main() {
 	out := flag.String("o", "", "Optional path to the output file.")
 	pkgname := flag.String("p", "", "Optional name of the package to generate.")
 	funcname := flag.String("f", "", "Optional name of the function to generate.")
+	uncompressed := flag.Bool("u", false, "The specified resource will /not/ be GZIP compressed when this flag isspecified. This alters the generated output code.")
 	version := flag.Bool("v", false, "Display version information.")
 
 	flag.Parse()
 
 	if *version {
 		fmt.Fprintf(os.Stdout, "%s v%s (Go runtime %s)\n",
-			APP_NAME, APP_VERSION, runtime.Version())
+			AppName, AppVersion, runtime.Version())
 		return
 	}
 
@@ -94,7 +95,13 @@ func main() {
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
 	if pipe {
-		if err = translate(os.Stdin, os.Stdout, *pkgname, *funcname); err != nil {
+		if *uncompressed {
+			err = translate_uncompressed(os.Stdin, os.Stdout, *pkgname, *funcname)
+		} else {
+			err = translate_compressed(os.Stdin, os.Stdout, *pkgname, *funcname)
+		}
+
+		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 		}
 	} else {
@@ -114,7 +121,13 @@ func main() {
 
 		defer fd.Close()
 
-		if err = translate(fs, fd, *pkgname, *funcname); err != nil {
+		if *uncompressed {
+			err = translate_uncompressed(fs, fd, *pkgname, *funcname)
+		} else {
+			err = translate_compressed(fs, fd, *pkgname, *funcname)
+		}
+
+		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}

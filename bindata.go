@@ -10,9 +10,18 @@ import (
 	"io"
 )
 
-// Translate the input file.
+// Translate the input file without GZIP compression.
+// input -> gowriter -> output.
+func translate_uncompressed(input io.Reader, output io.Writer, pkgname, funcname string) (err error) {
+	fmt.Fprintf(output, "package %s\n\nvar %s []byte = []byte{", pkgname, funcname)
+	io.Copy(&GoWriter{Writer: output}, input)
+	fmt.Fprint(output, "\n}")
+	return
+}
+
+// Translate the input file with GZIP compression.
 // input -> gzip -> gowriter -> output.
-func translate(input io.Reader, output io.Writer, pkgname, funcname string) (err error) {
+func translate_compressed(input io.Reader, output io.Writer, pkgname, funcname string) (err error) {
 	fmt.Fprintf(output, `package %s
 
 import (
