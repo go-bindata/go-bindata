@@ -9,6 +9,8 @@ import (
 	"io"
 )
 
+var newline = []byte{'\n'}
+
 type GoWriter struct {
 	io.Writer
 	c int
@@ -21,7 +23,7 @@ func (w *GoWriter) Write(p []byte) (n int, err error) {
 
 	for n = range p {
 		if w.c%12 == 0 {
-			w.Writer.Write([]byte{'\n'})
+			w.Writer.Write(newline)
 			w.c = 0
 		}
 

@@ -74,22 +74,22 @@ func main() {
 		if pipe {
 			// Can't infer from input file name in this mode.
 			fmt.Fprintln(os.Stderr, "[e] No function name specified.")
-			os.Exit(1)
-		} else {
-			_, file := path.Split(*in)
-			file = strings.ToLower(file)
-			file = strings.Replace(file, " ", "_", -1)
-			file = strings.Replace(file, ".", "_", -1)
-			file = strings.Replace(file, "-", "_", -1)
-
-			if unicode.IsDigit(rune(file[0])) {
-				// Identifier can't start with a digit.
-				file = "_" + file
-			}
-
-			fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
-			*funcname = file
+			return
 		}
+
+		_, file := path.Split(*in)
+		file = strings.ToLower(file)
+		file = strings.Replace(file, " ", "_", -1)
+		file = strings.Replace(file, ".", "_", -1)
+		file = strings.Replace(file, "-", "_", -1)
+
+		if unicode.IsDigit(rune(file[0])) {
+			// Identifier can't start with a digit.
+			file = "_" + file
+		}
+
+		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
+		*funcname = file
 	}
 
 	// Read the input file, transform it into a gzip compressed data stream and
