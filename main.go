@@ -16,7 +16,7 @@ import (
 
 const (
 	AppName    = "bindata"
-	AppVersion = "0.6"
+	AppVersion = "0.7"
 )
 
 func main() {
@@ -81,57 +81,52 @@ func main() {
 			file = strings.Replace(file, " ", "_", -1)
 			file = strings.Replace(file, ".", "_", -1)
 			file = strings.Replace(file, "-", "_", -1)
+
 			if unicode.IsDigit(rune(file[0])) {
 				// Identifier can't start with a digit.
 				file = "_" + file
 			}
+
 			fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
 			*funcname = file
 		}
 	}
 
-	var err error
-
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
 	if pipe {
 		if *uncompressed {
-			err = translate_uncompressed(os.Stdin, os.Stdout, *pkgname, *funcname)
+			translate_uncompressed(os.Stdin, os.Stdout, *pkgname, *funcname)
 		} else {
-			err = translate_compressed(os.Stdin, os.Stdout, *pkgname, *funcname)
-		}
-
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-		}
-	} else {
-		var fs, fd *os.File
-
-		if fs, err = os.Open(*in); err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
-		}
-
-		defer fs.Close()
-
-		if fd, err = os.Create(*out); err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
-		}
-
-		defer fd.Close()
-
-		if *uncompressed {
-			err = translate_uncompressed(fs, fd, *pkgname, *funcname)
-		} else {
-			err = translate_compressed(fs, fd, *pkgname, *funcname)
-		}
-
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
+			translate_compressed(os.Stdin, os.Stdout, *pkgname, *funcname)
 		}
 
 		fmt.Fprintln(os.Stdout, "[i] Done.")
+		return
 	}
+
+	var fs, fd *os.File
+	var err error
+
+	if fs, err = os.Open(*in); err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+		return
+	}
+
+	defer fs.Close()
+
+	if fd, err = os.Create(*out); err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+		return
+	}
+
+	defer fd.Close()
+
+	if *uncompressed {
+		translate_uncompressed(fs, fd, *pkgname, *funcname)
+	} else {
+		translate_compressed(fs, fd, *pkgname, *funcname)
+	}
+
+	fmt.Fprintln(os.Stdout, "[i] Done.")
 }
