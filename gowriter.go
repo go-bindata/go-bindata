@@ -9,7 +9,7 @@ import (
 	"io"
 )
 
-var newline = []byte{'\n'}
+var line = []byte("\"+\n\"")
 
 type GoWriter struct {
 	io.Writer
@@ -22,12 +22,12 @@ func (w *GoWriter) Write(p []byte) (n int, err error) {
 	}
 
 	for n = range p {
-		if w.c%12 == 0 {
-			w.Writer.Write(newline)
+		if w.c%16 == 0 {
+			w.Writer.Write(line)
 			w.c = 0
 		}
 
-		fmt.Fprintf(w.Writer, "0x%02x,", p[n])
+		fmt.Fprintf(w.Writer, "\\x%02x", p[n])
 		w.c++
 	}
 

@@ -16,7 +16,7 @@ import (
 
 const (
 	AppName    = "bindata"
-	AppVersion = "0.7"
+	AppVersion = "0.8"
 )
 
 func main() {
@@ -95,12 +95,7 @@ func main() {
 	// Read the input file, transform it into a gzip compressed data stream and
 	// write it out as a go source file.
 	if pipe {
-		if *uncompressed {
-			translate_uncompressed(os.Stdin, os.Stdout, *pkgname, *funcname)
-		} else {
-			translate_compressed(os.Stdin, os.Stdout, *pkgname, *funcname)
-		}
-
+		translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed)
 		fmt.Fprintln(os.Stdout, "[i] Done.")
 		return
 	}
@@ -122,11 +117,6 @@ func main() {
 
 	defer fd.Close()
 
-	if *uncompressed {
-		translate_uncompressed(fs, fd, *pkgname, *funcname)
-	} else {
-		translate_compressed(fs, fd, *pkgname, *funcname)
-	}
-
+	translate(fs, fd, *pkgname, *funcname, *uncompressed)
 	fmt.Fprintln(os.Stdout, "[i] Done.")
 }
