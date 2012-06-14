@@ -50,13 +50,16 @@ func %s() []byte {`, funcname, funcname)
 
 	if uncompressed {
 		fmt.Fprintf(output, `
+		// This bit of black magic ensures we do not get
+		// unneccesary memcpy's and can read directly from
+		// the .rodata section.
 		var empty [0]byte
 		sx := (*reflect.StringHeader)(unsafe.Pointer(&_%s))
 		b := empty[:]
 		bx := (*reflect.SliceHeader)(unsafe.Pointer(&b))
 		bx.Data = sx.Data
-	    bx.Len = len(_%s)
-	    bx.Cap = bx.Len
+		bx.Len = len(_%s)
+		bx.Cap = bx.Len
 		return b`, funcname, funcname)
 	} else {
 		fmt.Fprintf(output, `
@@ -68,8 +71,8 @@ func %s() []byte {`, funcname, funcname)
 		b := empty[:]
 		bx := (*reflect.SliceHeader)(unsafe.Pointer(&b))
 		bx.Data = sx.Data
-	    bx.Len = len(_%s)
-	    bx.Cap = bx.Len
+		bx.Len = len(_%s)
+		bx.Cap = bx.Len
 		
 		gz, err := gzip.NewReader(bytes.NewBuffer(b))
 
