@@ -1376,7 +1376,10 @@ var _gophercolor_png = "" +
 	"\x17\x7e\x60\x6e\xcb\x7f\x00\x4a\x3f\xff\x3a\x92\xd3\x63\x31\x00" +
 	"\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
 
-// gophercolor_png returns the binary data for a given file.
+// gophercolor_png returns the raw file data data.
+//
+// WARNING: The returned byte slice is READ-ONLY.
+// Attempting to alter the slice contents will yield a runtime panic.
 func gophercolor_png() []byte {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&_gophercolor_png))

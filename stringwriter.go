@@ -11,12 +11,12 @@ import (
 
 var line = []byte("\"+\n\"")
 
-type GoWriter struct {
+type StringWriter struct {
 	io.Writer
 	c int
 }
 
-func (w *GoWriter) Write(p []byte) (n int, err error) {
+func (w *StringWriter) Write(p []byte) (n int, err error) {
 	if len(p) == 0 {
 		return
 	}

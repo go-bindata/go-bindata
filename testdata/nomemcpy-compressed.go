@@ -1379,11 +1379,8 @@ var _gophercolor_png = "" +
 	"\x3a\x92\xd3\x63\x31\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60" +
 	"\x82\x01\x00\x00\xff\xff\x25\x50\x56\x5e\x8b\x55\x00\x00"
 
-// gophercolor_png returns the binary data for a given file.
+// gophercolor_png returns the raw, uncompressed file data data.
 func gophercolor_png() []byte {
-	// This bit of black magic ensures we do not get
-	// unneccesary memcpy's and can read directly from
-	// the .rodata section.
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&_gophercolor_png))
 	b := empty[:]
