@@ -31,5 +31,7 @@ func (w *ByteWriter) Write(p []byte) (n int, err error) {
 		w.c++
 	}
 
+	n++
+
 	return
 }
