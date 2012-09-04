@@ -16,20 +16,20 @@ The output file and code settings are inferred from this automatically.
     [i] Done.
 
 This creates the `testdata/gophercolor.png.go` file which has a package
-declaration with name `main` a variable holding the file data in a read-only
-string and one function named `gophercolor_png` with the following signature:
+declaration with name `main` and one function named `gophercolor_png` with
+the following signature:
 
     func gophercolor_png() []byte
 
 You can now simply include the new .go file in your program and call
-`gophercolor_png()` to get the uncompressed image data. The function panics
+`gophercolor_png()` to get the (uncompressed) image data. The function panics
 if something went wrong during decompression. See the testdata directory for
 example input and output files for various modes.
 
-Aternatively, you can pipe the input file data into stdin. bindata will then
-spit out the generated Go code to stdout. This does require explicitly naming
-the desired function name, as it can not be inferred from the input data.
-The package name will still default to 'main'.
+Aternatively, you can pipe the input file data into stdin. `go-bindata` will
+then spit out the generated Go code to stdout. This does require explicitly
+naming the desired function name, as it can not be inferred from the
+input data. The package name will still default to 'main'.
 
      $ cat testdata/gophercolor.png | go-bindata -f gophercolor_png | gofmt
 
@@ -41,7 +41,7 @@ Invoke the program with the -h flag for more options.
 Using the `-m` flag, will alter the way the output file is generated.
 It will employ a hack that allows us to read the file data directly from
 the compiled program's `.rodata` section. This ensures that when we call
-call our generate function, we omit unnecessary memcopies.
+call our generated function, we omit unnecessary memcopies.
 
 The downside of this, is that it requires dependencies on the `reflect` and
 `unsafe` packages. These may be restricted on platforms like AppEngine and
