@@ -20,7 +20,7 @@ import (
 	"io"
 )
 
-// %s returns the raw, uncompressed file data data.
+// %s returns raw, uncompressed file data.
 func %s() []byte {
 	gz, err := gzip.NewReader(bytes.NewBuffer([]byte{`, pkgname, funcname, funcname)
 

@@ -24,7 +24,7 @@ var _%s = "`, pkgname, funcname)
 
 	fmt.Fprintf(output, `"
 
-// %s returns the raw file data data.
+// %s returns raw file data.
 //
 // WARNING: The returned byte slice is READ-ONLY.
 // Attempting to alter the slice contents will yield a runtime panic.

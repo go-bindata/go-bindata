@@ -13,7 +13,7 @@ import (
 func translate_memcpy_uncomp(input io.Reader, output io.Writer, pkgname, funcname string) {
 	fmt.Fprintf(output, `package %s
 
-// %s returns the raw file data data.
+// %s returns raw file data.
 func %s() []byte {
 	return []byte{`, pkgname, funcname, funcname)
 

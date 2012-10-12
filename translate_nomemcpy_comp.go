@@ -30,7 +30,7 @@ var _%s = "`, pkgname, funcname)
 
 	fmt.Fprintf(output, `"
 
-// %s returns the raw, uncompressed file data data.
+// %s returns raw, uncompressed file data.
 func %s() []byte {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&_%s))
