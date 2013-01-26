@@ -53,9 +53,9 @@ func main() {
 		defer fd.Close()
 
 		translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
-	}
 
-	fmt.Fprintln(os.Stdout, "[i] Done.")
+		fmt.Fprintln(os.Stdout, "[i] Done.")
+	}
 }
 
 // parseArgs processes and verifies commandline arguments.
