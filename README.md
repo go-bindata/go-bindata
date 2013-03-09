@@ -56,7 +56,7 @@ The default behaviour is to use the old code generation method. This
 prevents the two previously mentioned issues, but will employ at least one
 extra memcopy and thus increase memory requirements.
 
-For instance, consider the following two examples...
+For instance, consider the following two examples:
 
 This would be the default mode, using an extra memcopy but gives a safe
 implementation without dependencies on `reflect` and `unsafe`:
@@ -65,7 +65,7 @@ implementation without dependencies on `reflect` and `unsafe`:
         return []byte{0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a}
     }
 
-Here is the same functionality, but uses the .rodata hack.
+Here is the same functionality, but uses the `.rodata` hack.
 The byte slice returned from this example can not be written to without
 generating a runtime error.
 
