@@ -9,8 +9,6 @@ import (
 	"io"
 )
 
-var line = []byte("\"+\n\"")
-
 type StringWriter struct {
 	io.Writer
 	c int
@@ -22,11 +20,6 @@ func (w *StringWriter) Write(p []byte) (n int, err error) {
 	}
 
 	for n = range p {
-		if w.c%16 == 0 {
-			w.Writer.Write(line)
-			w.c = 0
-		}
-
 		fmt.Fprintf(w.Writer, "\\x%02x", p[n])
 		w.c++
 	}
