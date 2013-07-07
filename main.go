@@ -16,7 +16,7 @@ import (
 
 const (
 	AppName    = "bindata"
-	AppVersion = "1.0.0"
+	AppVersion = "1.0.1"
 )
 
 var (
