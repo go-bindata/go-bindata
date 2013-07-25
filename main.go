@@ -18,7 +18,7 @@ import (
 var (
 	pipe         = false
 	in           = ""
-	out          = flag.String("out", "", "Optional path to the output file.")
+	out          = flag.String("out", "", "Optional path to the output directory.")
 	pkgname      = flag.String("pkg", "main", "Name of the package to generate.")
 	funcname     = flag.String("func", "", "Optional name of the function to generate.")
 	prefix       = flag.String("prefix", "", "Optional path prefix to strip off map keys and function names.")
@@ -59,7 +59,7 @@ func main() {
 	// Append the TOC init function to the end of the output file and
 	// write the `bindata-toc.go` file, if applicable.
 	if *toc {
-		err := createTOC(in, *pkgname)
+		err := createTOC(*out, *pkgname)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
@@ -85,35 +85,10 @@ func parseArgs() {
 
 	pipe = flag.NArg() == 0
 
-	if !pipe && len(*out) == 0 {
+	if !pipe {
 		*prefix, _ = filepath.Abs(filepath.Clean(*prefix))
 		in, _ = filepath.Abs(filepath.Clean(flag.Args()[0]))
-
-		// Ensure we create our own output filename that does not already exist.
-		dir, file := path.Split(in)
-
-		*out = path.Join(dir, file+".go")
-		_, err := os.Lstat(*out)
-
-		if err == nil {
-			// File already exists. Pad name with a sequential number until we
-			// find a name that is available.
-			count := 0
-
-			for {
-				f := path.Join(dir, fmt.Sprintf("%s.%d.go", file, count))
-				_, err = os.Lstat(f)
-
-				if err != nil {
-					*out = f
-					break
-				}
-
-				count++
-			}
-		}
-
-		fmt.Fprintf(os.Stderr, "[w] No output file specified. Using %s.\n", *out)
+		*out = safeFilename(*out, in)
 	}
 
 	if len(*pkgname) == 0 {
@@ -136,6 +111,40 @@ func parseArgs() {
 		*funcname = safeFuncname(in, *prefix)
 		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using %s.\n", *funcname)
 	}
+}
+
+// safeFilename creates a safe output filename from the given
+// output base directory and input filename.
+func safeFilename(out, in string) string {
+	dir, in := filepath.Split(in)
+
+	if len(out) == 0 {
+		out = dir
+	} else {
+		out, _ = filepath.Abs(filepath.Clean(out))
+	}
+
+	filename := path.Join(out, in+".go")
+	_, err := os.Lstat(filename)
+
+	if err == nil {
+		// File already exists. Pad name with a sequential number until we
+		// find a name that is available.
+		count := 0
+
+		for {
+			filename = path.Join(out, fmt.Sprintf("%s.%d.go", in, count))
+			_, err = os.Lstat(filename)
+
+			if err != nil {
+				break
+			}
+
+			count++
+		}
+	}
+
+	return filename
 }
 
 // safeFuncname creates a safe function name from the input path.
