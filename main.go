@@ -9,25 +9,24 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"runtime"
+	"path/filepath"
+	"regexp"
 	"strings"
 	"unicode"
 )
 
-const (
-	AppName    = "bindata"
-	AppVersion = "1.0.1"
-)
-
 var (
 	pipe         = false
-	in           = flag.String("i", "", "Path to the input file. Alternatively, pipe the file data into stdin.")
-	out          = flag.String("o", "", "Optional path to the output file.")
-	pkgname      = flag.String("p", "", "Optional name of the package to generate.")
-	funcname     = flag.String("f", "", "Optional name of the function/variable to generate.")
-	uncompressed = flag.Bool("u", false, "The specified resource will /not/ be GZIP compressed when this flag is specified. This alters the generated output code.")
-	nomemcopy    = flag.Bool("m", false, "Use the memcopy hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
-	version      = flag.Bool("v", false, "Display version information.")
+	in           = ""
+	out          = flag.String("out", "", "Optional path to the output file.")
+	pkgname      = flag.String("pkg", "main", "Name of the package to generate.")
+	funcname     = flag.String("func", "", "Optional name of the function to generate.")
+	prefix       = flag.String("prefix", "", "Optional path prefix to strip off map keys and function names.")
+	uncompressed = flag.Bool("uncompressed", false, "The specified resource will /not/ be GZIP compressed when this flag is specified. This alters the generated output code.")
+	nomemcopy    = flag.Bool("nomemcopy", false, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
+	toc          = flag.Bool("toc", false, "Generate a table of contents for this and other files. The input filepath becomes the map key. This option is only useable in non-pipe mode.")
+	version      = flag.Bool("version", false, "Display version information.")
+	regFuncName  = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 )
 
 func main() {
@@ -35,53 +34,77 @@ func main() {
 
 	if pipe {
 		translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed, *nomemcopy)
-	} else {
-		fs, err := os.Open(*in)
+		return
+	}
+
+	fs, err := os.Open(in)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+		return
+	}
+
+	defer fs.Close()
+
+	fd, err := os.Create(*out)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
+		return
+	}
+
+	defer fd.Close()
+
+	// Translate binary to Go code.
+	translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
+
+	// Append the TOC init function to the end of the output file and
+	// write the `bindata-toc.go` file, if applicable.
+	if *toc {
+		err := createTOC(in, *pkgname)
+
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
 
-		defer fs.Close()
-
-		fd, err := os.Create(*out)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
-		}
-
-		defer fd.Close()
-
-		translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
-
-		fmt.Fprintln(os.Stdout, "[i] Done.")
+		writeTOCInit(fd, in, *prefix, *funcname)
 	}
 }
 
 // parseArgs processes and verifies commandline arguments.
 func parseArgs() {
+	flag.Usage = func() {
+		fmt.Printf("Usage: %s [options] <filename>\n\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	if *version {
-		fmt.Fprintf(os.Stdout, "%s v%s (Go runtime %s)\n",
-			AppName, AppVersion, runtime.Version())
+		fmt.Printf("%s\n", Version())
 		os.Exit(0)
 	}
 
-	pipe = len(*in) == 0
+	pipe = flag.NArg() == 0
 
 	if !pipe && len(*out) == 0 {
-		// Ensure we create our own output filename that does not already exist.
-		dir, file := path.Split(*in)
+		*prefix, _ = filepath.Abs(filepath.Clean(*prefix))
+		in, _ = filepath.Abs(filepath.Clean(flag.Args()[0]))
 
-		*out = path.Join(dir, file) + ".go"
-		if _, err := os.Lstat(*out); err == nil {
+		// Ensure we create our own output filename that does not already exist.
+		dir, file := path.Split(in)
+
+		*out = path.Join(dir, file+".go")
+		_, err := os.Lstat(*out)
+
+		if err == nil {
 			// File already exists. Pad name with a sequential number until we
 			// find a name that is available.
 			count := 0
+
 			for {
 				f := path.Join(dir, fmt.Sprintf("%s.%d.go", file, count))
-				if _, err := os.Lstat(f); err != nil {
+				_, err = os.Lstat(f)
+
+				if err != nil {
 					*out = f
 					break
 				}
@@ -90,7 +113,7 @@ func parseArgs() {
 			}
 		}
 
-		fmt.Fprintf(os.Stderr, "[w] No output file specified. Using '%s'.\n", *out)
+		fmt.Fprintf(os.Stderr, "[w] No output file specified. Using %s.\n", *out)
 	}
 
 	if len(*pkgname) == 0 {
@@ -110,18 +133,36 @@ func parseArgs() {
 			os.Exit(1)
 		}
 
-		_, file := path.Split(*in)
-		file = strings.ToLower(file)
-		file = strings.Replace(file, " ", "_", -1)
-		file = strings.Replace(file, ".", "_", -1)
-		file = strings.Replace(file, "-", "_", -1)
-
-		if unicode.IsDigit(rune(file[0])) {
-			// Identifier can't start with a digit.
-			file = "_" + file
-		}
-
-		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using '%s'.\n", file)
-		*funcname = file
+		*funcname = safeFuncname(in, *prefix)
+		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using %s.\n", *funcname)
 	}
+}
+
+// safeFuncname creates a safe function name from the input path.
+func safeFuncname(in, prefix string) string {
+	name := strings.Replace(in, prefix, "", 1)
+
+	if len(name) == 0 {
+		name = in
+	}
+
+	name = strings.ToLower(name)
+	name = regFuncName.ReplaceAllString(name, "_")
+
+	if unicode.IsDigit(rune(name[0])) {
+		// Identifier can't start with a digit.
+		name = "_" + name
+	}
+
+	// Get rid of "__" instances for niceness.
+	for strings.Index(name, "__") > -1 {
+		name = strings.Replace(name, "__", "_", -1)
+	}
+
+	// Leading underscore is silly.
+	if name[0] == '_' {
+		name = name[1:]
+	}
+
+	return name
 }
