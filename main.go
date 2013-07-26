@@ -124,8 +124,17 @@ func safeFilename(out, in string) string {
 		out, _ = filepath.Abs(filepath.Clean(out))
 	}
 
+	// Ensure output directory exists while we're here.
+	stat, err := os.Lstat(out)
+	if err != nil {
+		os.MkdirAll(out, 0755)
+	} else if !stat.IsDir() {
+		fmt.Fprintf(os.Stderr, "Output path is an existing file.\n")
+		os.Exit(1)
+	}
+
 	filename := path.Join(out, in+".go")
-	_, err := os.Lstat(filename)
+	_, err = os.Lstat(filename)
 
 	if err == nil {
 		// File already exists. Pad name with a sequential number until we
