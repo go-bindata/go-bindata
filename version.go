@@ -12,7 +12,7 @@ import (
 const (
 	AppName         = "bindata"
 	AppVersionMajor = 2
-	AppVersionMinor = 0
+	AppVersionMinor = 1
 )
 
 // revision part of the program version.
