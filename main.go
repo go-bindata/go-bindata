@@ -18,7 +18,7 @@ import (
 var (
 	pipe         = false
 	in           = ""
-	out          = flag.String("out", "", "Optional path to the output directory.")
+	out          = flag.String("out", "", "Optional path and name of the output file.")
 	pkgname      = flag.String("pkg", "main", "Name of the package to generate.")
 	funcname     = flag.String("func", "", "Optional name of the function to generate.")
 	prefix       = flag.String("prefix", "", "Optional path prefix to strip off map keys and function names.")
@@ -59,7 +59,8 @@ func main() {
 	// Append the TOC init function to the end of the output file and
 	// write the `bindata-toc.go` file, if applicable.
 	if *toc {
-		err := createTOC(*out, *pkgname)
+		dir, _ := filepath.Split(*out)
+		err := createTOC(dir, *pkgname)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
@@ -114,43 +115,39 @@ func parseArgs() {
 }
 
 // safeFilename creates a safe output filename from the given
-// output base directory and input filename.
+// output and input paths.
 func safeFilename(out, in string) string {
-	dir, in := filepath.Split(in)
+	var filename string
 
 	if len(out) == 0 {
-		out = dir
+		filename = in + ".go"
+
+		_, err := os.Lstat(filename)
+		if err == nil {
+			// File already exists. Pad name with a sequential number until we
+			// find a name that is available.
+			count := 0
+
+			for {
+				filename = path.Join(out, fmt.Sprintf("%s.%d.go", in, count))
+				_, err = os.Lstat(filename)
+
+				if err != nil {
+					break
+				}
+
+				count++
+			}
+		}
 	} else {
-		out, _ = filepath.Abs(filepath.Clean(out))
+		filename, _ = filepath.Abs(filepath.Clean(out))
 	}
 
 	// Ensure output directory exists while we're here.
-	stat, err := os.Lstat(out)
+	dir, _ := filepath.Split(filename)
+	_, err := os.Lstat(dir)
 	if err != nil {
-		os.MkdirAll(out, 0755)
-	} else if !stat.IsDir() {
-		fmt.Fprintf(os.Stderr, "Output path is an existing file.\n")
-		os.Exit(1)
-	}
-
-	filename := path.Join(out, in+".go")
-	_, err = os.Lstat(filename)
-
-	if err == nil {
-		// File already exists. Pad name with a sequential number until we
-		// find a name that is available.
-		count := 0
-
-		for {
-			filename = path.Join(out, fmt.Sprintf("%s.%d.go", in, count))
-			_, err = os.Lstat(filename)
-
-			if err != nil {
-				break
-			}
-
-			count++
-		}
+		os.MkdirAll(dir, 0755)
 	}
 
 	return filename
