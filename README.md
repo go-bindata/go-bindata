@@ -161,3 +161,13 @@ package $PACKAGENAME
 // supplied to go-bindata.
 var go_bindata = make(map[string] func() []byte)
 ```
+
+#### Build tags
+
+With the optional -tags flag, you can specify any go build tags that
+must be fulfilled for the output file to be included in a build. This
+is useful for including binary data in multiple formats, where the desired
+format is specified at build time with the appropriate tag(s).
+
+The tags are appended to a `// +build` line in the beginning of the output file
+and must follow the build tags syntax specified by the go tool.

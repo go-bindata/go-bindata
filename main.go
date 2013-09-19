@@ -24,6 +24,7 @@ var (
 	prefix       = flag.String("prefix", "", "Optional path prefix to strip off map keys and function names.")
 	uncompressed = flag.Bool("uncompressed", false, "The specified resource will /not/ be GZIP compressed when this flag is specified. This alters the generated output code.")
 	nomemcopy    = flag.Bool("nomemcopy", false, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
+	tags         = flag.String("tags", "", "Optional build tags")
 	toc          = flag.Bool("toc", false, "Generate a table of contents for this and other files. The input filepath becomes the map key. This option is only useable in non-pipe mode.")
 	version      = flag.Bool("version", false, "Display version information.")
 	regFuncName  = regexp.MustCompile(`[^a-zA-Z0-9_]`)
@@ -52,6 +53,10 @@ func main() {
 	}
 
 	defer fd.Close()
+
+	if *tags != "" {
+		fmt.Fprintf(fd, "// +build %s\n\n", *tags)
+	}
 
 	// Translate binary to Go code.
 	translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
