@@ -11,8 +11,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
-	"strings"
 	"unicode"
 )
 
@@ -28,7 +26,6 @@ var (
 	tags         = flag.String("tags", "", "Optional build tags")
 	toc          = flag.Bool("toc", false, "Generate a table of contents for this and other files. The input filepath becomes the map key. This option is only useable in non-pipe mode.")
 	version      = flag.Bool("version", false, "Display version information.")
-	regFuncName  = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 )
 
 func main() {
@@ -73,7 +70,7 @@ func main() {
 			return
 		}
 
-		bindata.WriteTOCInit(fd, in, *prefix, *funcname)
+		bindata.WriteTOCInit(fd, in, "", *funcname)
 	}
 }
 
@@ -115,7 +112,7 @@ func parseArgs() {
 			os.Exit(1)
 		}
 
-		*funcname = safeFuncname(in, *prefix)
+		*funcname = bindata.SafeFuncname(in, *prefix)
 		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using %s.\n", *funcname)
 	}
 }
@@ -157,33 +154,4 @@ func safeFilename(out, in string) string {
 	}
 
 	return filename
-}
-
-// safeFuncname creates a safe function name from the input path.
-func safeFuncname(in, prefix string) string {
-	name := strings.Replace(in, prefix, "", 1)
-
-	if len(name) == 0 {
-		name = in
-	}
-
-	name = strings.ToLower(name)
-	name = regFuncName.ReplaceAllString(name, "_")
-
-	if unicode.IsDigit(rune(name[0])) {
-		// Identifier can't start with a digit.
-		name = "_" + name
-	}
-
-	// Get rid of "__" instances for niceness.
-	for strings.Index(name, "__") > -1 {
-		name = strings.Replace(name, "__", "_", -1)
-	}
-
-	// Leading underscore is silly.
-	if name[0] == '_' {
-		name = name[1:]
-	}
-
-	return name
 }

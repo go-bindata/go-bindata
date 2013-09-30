@@ -26,7 +26,8 @@ var go_bindata = make(map[string]func() []byte)`, pkgname)
 	return ioutil.WriteFile(file, []byte(code), 0600)
 }
 
-// writeTOCInit writes the TOC init function for a given data file.
+// WriteTOCInit writes the TOC init function for a given data file
+// replacing the prefix in the filename by "", funcname being the translated function name
 func WriteTOCInit(output io.Writer, filename, prefix, funcname string) {
 	filename = strings.Replace(filename, prefix, "", 1)
 	fmt.Fprintf(output, `
