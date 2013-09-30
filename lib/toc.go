@@ -2,7 +2,7 @@
 // license. Its contents can be found at:
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-package main
+package bindata
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 )
 
 // createTOC writes a table of contents file to the given location.
-func createTOC(dir, pkgname string) error {
+func CreateTOC(dir, pkgname string) error {
 	file := filepath.Join(dir, "bindata-toc.go")
 	code := fmt.Sprintf(`package %s
 
@@ -26,8 +26,9 @@ var go_bindata = make(map[string]func() []byte)`, pkgname)
 	return ioutil.WriteFile(file, []byte(code), 0600)
 }
 
-// writeTOCInit writes the TOC init function for a given data file.
-func writeTOCInit(output io.Writer, filename, prefix, funcname string) {
+// WriteTOCInit writes the TOC init function for a given data file
+// replacing the prefix in the filename by "", funcname being the translated function name
+func WriteTOCInit(output io.Writer, filename, prefix, funcname string) {
 	filename = strings.Replace(filename, prefix, "", 1)
 	fmt.Fprintf(output, `
 

@@ -7,11 +7,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/jteeuwen/go-bindata/lib"
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
-	"strings"
 	"unicode"
 )
 
@@ -27,14 +26,13 @@ var (
 	tags         = flag.String("tags", "", "Optional build tags")
 	toc          = flag.Bool("toc", false, "Generate a table of contents for this and other files. The input filepath becomes the map key. This option is only useable in non-pipe mode.")
 	version      = flag.Bool("version", false, "Display version information.")
-	regFuncName  = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 )
 
 func main() {
 	parseArgs()
 
 	if pipe {
-		translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed, *nomemcopy)
+		bindata.Translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed, *nomemcopy)
 		return
 	}
 
@@ -59,20 +57,20 @@ func main() {
 	}
 
 	// Translate binary to Go code.
-	translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
+	bindata.Translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
 
 	// Append the TOC init function to the end of the output file and
 	// write the `bindata-toc.go` file, if applicable.
 	if *toc {
 		dir, _ := filepath.Split(*out)
-		err := createTOC(dir, *pkgname)
+		err := bindata.CreateTOC(dir, *pkgname)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
 
-		writeTOCInit(fd, in, *prefix, *funcname)
+		bindata.WriteTOCInit(fd, in, "", *funcname)
 	}
 }
 
@@ -85,7 +83,7 @@ func parseArgs() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("%s\n", Version())
+		fmt.Printf("%s\n", bindata.Version())
 		os.Exit(0)
 	}
 
@@ -114,7 +112,7 @@ func parseArgs() {
 			os.Exit(1)
 		}
 
-		*funcname = safeFuncname(in, *prefix)
+		*funcname = bindata.SafeFuncname(in, *prefix)
 		fmt.Fprintf(os.Stderr, "[w] No function name specified. Using %s.\n", *funcname)
 	}
 }
@@ -156,33 +154,4 @@ func safeFilename(out, in string) string {
 	}
 
 	return filename
-}
-
-// safeFuncname creates a safe function name from the input path.
-func safeFuncname(in, prefix string) string {
-	name := strings.Replace(in, prefix, "", 1)
-
-	if len(name) == 0 {
-		name = in
-	}
-
-	name = strings.ToLower(name)
-	name = regFuncName.ReplaceAllString(name, "_")
-
-	if unicode.IsDigit(rune(name[0])) {
-		// Identifier can't start with a digit.
-		name = "_" + name
-	}
-
-	// Get rid of "__" instances for niceness.
-	for strings.Index(name, "__") > -1 {
-		name = strings.Replace(name, "__", "_", -1)
-	}
-
-	// Leading underscore is silly.
-	if name[0] == '_' {
-		name = name[1:]
-	}
-
-	return name
 }

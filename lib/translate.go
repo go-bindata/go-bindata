@@ -2,16 +2,21 @@
 // license. Its contents can be found at:
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-package main
+package bindata
 
 import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"regexp"
+	"strings"
+	"unicode"
 )
 
+var regFuncName = regexp.MustCompile(`[^a-zA-Z0-9_]`)
+
 // translate translates the input file to go source code.
-func translate(input io.Reader, output io.Writer, pkgname, funcname string, uncompressed, nomemcpy bool) {
+func Translate(input io.Reader, output io.Writer, pkgname, funcname string, uncompressed, nomemcpy bool) {
 	if nomemcpy {
 		if uncompressed {
 			translate_nomemcpy_uncomp(input, output, pkgname, funcname)
@@ -150,4 +155,33 @@ func %s() []byte {
 	return b
 }
 `, funcname, funcname, funcname, funcname)
+}
+
+// safeFuncname creates a safe function name from the input path.
+func SafeFuncname(in, prefix string) string {
+	name := strings.Replace(in, prefix, "", 1)
+
+	if len(name) == 0 {
+		name = in
+	}
+
+	name = strings.ToLower(name)
+	name = regFuncName.ReplaceAllString(name, "_")
+
+	if unicode.IsDigit(rune(name[0])) {
+		// Identifier can't start with a digit.
+		name = "_" + name
+	}
+
+	// Get rid of "__" instances for niceness.
+	for strings.Index(name, "__") > -1 {
+		name = strings.Replace(name, "__", "_", -1)
+	}
+
+	// Leading underscore is silly.
+	if name[0] == '_' {
+		name = name[1:]
+	}
+
+	return name
 }
