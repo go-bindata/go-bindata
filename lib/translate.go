@@ -2,7 +2,7 @@
 // license. Its contents can be found at:
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-package main
+package bindata
 
 import (
 	"compress/gzip"
@@ -11,7 +11,7 @@ import (
 )
 
 // translate translates the input file to go source code.
-func translate(input io.Reader, output io.Writer, pkgname, funcname string, uncompressed, nomemcpy bool) {
+func Translate(input io.Reader, output io.Writer, pkgname, funcname string, uncompressed, nomemcpy bool) {
 	if nomemcpy {
 		if uncompressed {
 			translate_nomemcpy_uncomp(input, output, pkgname, funcname)

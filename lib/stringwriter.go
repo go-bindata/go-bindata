@@ -2,7 +2,7 @@
 // license. Its contents can be found at:
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-package main
+package bindata
 
 import (
 	"fmt"

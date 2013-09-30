@@ -7,6 +7,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/jteeuwen/go-bindata/lib"
 	"os"
 	"path"
 	"path/filepath"
@@ -34,7 +35,7 @@ func main() {
 	parseArgs()
 
 	if pipe {
-		translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed, *nomemcopy)
+		bindata.Translate(os.Stdin, os.Stdout, *pkgname, *funcname, *uncompressed, *nomemcopy)
 		return
 	}
 
@@ -59,20 +60,20 @@ func main() {
 	}
 
 	// Translate binary to Go code.
-	translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
+	bindata.Translate(fs, fd, *pkgname, *funcname, *uncompressed, *nomemcopy)
 
 	// Append the TOC init function to the end of the output file and
 	// write the `bindata-toc.go` file, if applicable.
 	if *toc {
 		dir, _ := filepath.Split(*out)
-		err := createTOC(dir, *pkgname)
+		err := bindata.CreateTOC(dir, *pkgname)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
 			return
 		}
 
-		writeTOCInit(fd, in, *prefix, *funcname)
+		bindata.WriteTOCInit(fd, in, *prefix, *funcname)
 	}
 }
 
@@ -85,7 +86,7 @@ func parseArgs() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("%s\n", Version())
+		fmt.Printf("%s\n", bindata.Version())
 		os.Exit(0)
 	}
 
