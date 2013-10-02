@@ -70,7 +70,7 @@ func main() {
 			return
 		}
 
-		bindata.WriteTOCInit(fd, in, "", *funcname)
+		bindata.WriteTOCInit(fd, in, *prefix, *funcname)
 	}
 }
 
