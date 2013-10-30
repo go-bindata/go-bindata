@@ -4,6 +4,12 @@
 
 package bindata
 
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
+
 // Config defines a set of options for the asset conversion.
 type Config struct {
 	// Name of the package to use. Defaults to 'main'.
@@ -20,7 +26,9 @@ type Config struct {
 	// conversion.
 	Input string
 
-	// Output defines the output directory for the generated code.
+	// Output defines the output file for the generated code.
+	// If left empty, this defaults to 'bindata.go' in the current
+	// working directory.
 	Output string
 
 	/*
@@ -87,11 +95,22 @@ type Config struct {
 	NoMemCopy bool
 
 	/*
-	   Compress means the assets are GZIP compressed before being turned
+	   NoCompress means the assets are /not/ GZIP compressed before being turned
 	   into Go code. The generated function will automatically unzip
 	   the file data when called. Defaults to true.
 	*/
-	Compress bool
+	NoCompress bool
+
+	// Perform a debug build. This generates an asset file, which
+	// loads the asset contents directly from disk at their original
+	// location, instead of embedding the contents in the code.
+	//
+	// This is mostly useful if you anticipate that the assets are
+	// going to change during your development cycle. You will always
+	// want your code to access the latest version of the asset.
+	// Only in release mode, will the assets actually be embedded
+	// in the code. The default behaviour is Release mode.
+	Debug bool
 }
 
 // NewConfig returns a default configuration struct.
@@ -99,6 +118,44 @@ func NewConfig() *Config {
 	c := new(Config)
 	c.Package = "main"
 	c.NoMemCopy = false
-	c.Compress = true
+	c.NoCompress = false
+	c.Debug = false
 	return c
+}
+
+// validate ensures the config has sane values.
+// Part of which means checking if certain file/directory paths exist.
+func (c *Config) validate() error {
+	if len(c.Package) == 0 {
+		return fmt.Errorf("Missing package name")
+	}
+
+	stat, err := os.Lstat(c.Input)
+	if err != nil {
+		return fmt.Errorf("Input path: %v", err)
+	}
+
+	if !stat.IsDir() {
+		return fmt.Errorf("Input path is not a directory.")
+	}
+
+	if len(c.Output) == 0 {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return fmt.Errorf("Unable to determine current working directory.")
+		}
+
+		c.Output = filepath.Join(cwd, "bindata.go")
+	}
+
+	stat, err = os.Lstat(c.Output)
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("Output path: %v", err)
+	}
+
+	if stat != nil && stat.IsDir() {
+		return fmt.Errorf("Output path is a directory.")
+	}
+
+	return nil
 }

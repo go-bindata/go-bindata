@@ -7,26 +7,17 @@ package bindata
 import (
 	"fmt"
 	"io"
-	"os"
-	"path/filepath"
 )
 
 // writeDebug writes the debug code file.
-func writeDebug(c *Config, toc []Asset) error {
-	fd, err := os.Create(filepath.Join(c.Output, "bindata_debug.go"))
-	if err != nil {
-		return err
-	}
-
-	defer fd.Close()
-
-	err = writeDebugHeader(fd, c)
+func writeDebug(w io.Writer, toc []Asset) error {
+	err := writeDebugHeader(w)
 	if err != nil {
 		return err
 	}
 
 	for i := range toc {
-		err = writeDebugAsset(fd, c, &toc[i])
+		err = writeDebugAsset(w, &toc[i])
 		if err != nil {
 			return err
 		}
@@ -37,30 +28,8 @@ func writeDebug(c *Config, toc []Asset) error {
 
 // writeDebugHeader writes output file headers.
 // This targets debug builds.
-func writeDebugHeader(w io.Writer, c *Config) error {
-	var err error
-
-	// Write build tags, if applicable.
-	if len(c.Tags) > 0 {
-		_, err = fmt.Fprintf(w, "// +build !release %s\n\n", c.Tags)
-	} else {
-		_, err = fmt.Fprintf(w, "// +build !release\n\n")
-	}
-
-	if err != nil {
-		return err
-	}
-
-	// Write package declaration
-	_, err = fmt.Fprintf(w, "package %s\n\n", c.Package)
-	if err != nil {
-		return err
-	}
-
-	// Define packages we need to import.
-	// And add the asset_read function. This is called
-	// from asset-specific functions.
-	_, err = fmt.Fprintf(w, `import (
+func writeDebugHeader(w io.Writer) error {
+	_, err := fmt.Fprintf(w, `import (
 	"bytes"
 	"io"
 	"log"
@@ -93,14 +62,16 @@ func bindata_read(path, name string) []byte {
 // writeDebugAsset write a debug entry for the given asset.
 // A debug entry is simply a function which reads the asset from
 // the original file (e.g.: from disk).
-func writeDebugAsset(w io.Writer, c *Config, asset *Asset) error {
-	_, err := fmt.Fprintf(w, `func %s() []byte {
+func writeDebugAsset(w io.Writer, asset *Asset) error {
+	_, err := fmt.Fprintf(w, `
+// %s reads file data from disk.
+// It panics if something went wrong in the process.
+func %s() []byte {
 	return bindata_read(
 		%q,
 		%q,
 	)
 }
-
-`, asset.Func, asset.Path, asset.Name)
+`, asset.Func, asset.Func, asset.Path, asset.Name)
 	return err
 }

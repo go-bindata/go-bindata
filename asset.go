@@ -4,7 +4,7 @@
 
 package bindata
 
-// File is an asset entry for the table of contents.
+// Asset holds information about a single asset to be processed.
 type Asset struct {
 	Path string // Full file path.
 	Name string // Key used in TOC -- name by which asset is referenced.

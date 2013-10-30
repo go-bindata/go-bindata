@@ -13,11 +13,11 @@ import (
 )
 
 func main() {
-	cfg, status := parseArgs()
-	err := bindata.Translate(cfg, status)
+	cfg := parseArgs()
+	err := bindata.Translate(cfg)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "bindata: %v", err)
+		fmt.Fprintf(os.Stderr, "bindata: %v\n", err)
 	}
 }
 
@@ -26,23 +26,23 @@ func main() {
 //
 // This function exits the program with an error, if
 // any of the command line options are incorrect.
-func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
-	var version, quiet bool
+func parseArgs() *bindata.Config {
+	var version bool
 
 	c := bindata.NewConfig()
 
 	flag.Usage = func() {
-		fmt.Printf("Usage: %s [options] <input> [<output>]\n\n", os.Args[0])
+		fmt.Printf("Usage: %s [options] <input dir> [<output file>]\n\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&c.Tags, "tags", c.Tags, "Comma-separated list of build tags to include.")
-	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off map keys and function names.")
+	flag.BoolVar(&c.Debug, "debug", c.Debug, "Do not embed the assets, but provide the embedding API. Contents will still be loaded from disk.")
+	flag.StringVar(&c.Tags, "tags", c.Tags, "Optional set of uild tags to include.")
+	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off asset names.")
 	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")
 	flag.BoolVar(&c.NoMemCopy, "nomemcopy", c.NoMemCopy, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
-	flag.BoolVar(&c.Compress, "nocompress", !c.Compress, "Assets will /not/ be GZIP compressed when this flag is specified.")
+	flag.BoolVar(&c.NoCompress, "nocompress", c.NoCompress, "Assets will *not* be GZIP compressed when this flag is specified.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
-	flag.BoolVar(&quiet, "quiet", false, "Do not print conversion status.")
 	flag.Parse()
 
 	if version {
@@ -52,64 +52,15 @@ func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
 
 	// Make sure we have in/output paths.
 	if flag.NArg() == 0 {
-		fmt.Fprintf(os.Stderr, "Missing asset directory.\n")
+		fmt.Fprintf(os.Stderr, "Missing input path.\n")
 		os.Exit(1)
 	}
 
-	// Test validity of input path.
 	c.Input = filepath.Clean(flag.Arg(0))
 
-	stat, err := os.Lstat(c.Input)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Input path: %v.\n", err)
-		os.Exit(1)
-	}
-
-	if !stat.IsDir() {
-		fmt.Fprintf(os.Stderr, "Input path is not a directory.\n")
-		os.Exit(1)
-	}
-
-	// Find and test validity of output path.
 	if flag.NArg() > 1 {
 		c.Output = filepath.Clean(flag.Arg(1))
-
-		stat, err := os.Lstat(c.Output)
-		if err != nil {
-			if !os.IsNotExist(err) {
-				fmt.Fprintf(os.Stderr, "Output path: %v.\n", err)
-				os.Exit(1)
-			}
-
-			// Create output directory
-			err = os.MkdirAll(c.Output, 0744)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Create Output directory: %v.\n", err)
-				os.Exit(1)
-			}
-
-		} else if !stat.IsDir() {
-			fmt.Fprintf(os.Stderr, "Output path is not a directory.\n")
-			os.Exit(1)
-		}
-	} else {
-		// If no output path is specified, use the current directory.
-		c.Output, err = os.Getwd()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to determine current working directory: %v\n", err)
-			os.Exit(1)
-		}
 	}
 
-	// The command line flag supplies the inversion of this value.
-	c.Compress = !c.Compress
-
-	if quiet {
-		return c, nil
-	}
-
-	return c, func(file string, current, total int) bool {
-		fmt.Printf("[%d/%d] %s\n", current, total, file)
-		return false
-	}
+	return c
 }

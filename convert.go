@@ -13,38 +13,59 @@ import (
 	"unicode"
 )
 
-// ProgressFunc is a callback handler which is fired whenever
-// bindata begins translating a new file.
-//
-// It takes the file path and the current and total file counts.
-// This can be used to indicate progress of the conversion.
-//
-// If this handler returns true, the processing is stopped and
-// Translate() returns immediately.
-type ProgressFunc func(file string, current, total int) bool
-
 // Translate reads assets from an input directory, converts them
-// to Go code and writes new files to the output directory specified
+// to Go code and writes new files to the output file specified
 // in the given configuration.
-func Translate(c *Config, pf ProgressFunc) error {
+func Translate(c *Config) error {
 	var toc []Asset
 
-	err := findFiles(c.Input, c.Prefix, &toc)
+	// Ensure our configuration has sane values.
+	err := c.validate()
 	if err != nil {
 		return err
 	}
 
-	err = writeDebug(c, toc)
+	// Locate all the assets.
+	err = findFiles(c.Input, c.Prefix, &toc)
 	if err != nil {
 		return err
 	}
 
-	err = writeRelease(c, toc)
+	// Create output file.
+	fd, err := os.Create(c.Output)
 	if err != nil {
 		return err
 	}
 
-	return writeTOC(c, toc)
+	defer fd.Close()
+
+	// Write build tags, if applicable.
+	if len(c.Tags) > 0 {
+		_, err = fmt.Fprintf(fd, "// +build %s\n\n", c.Tags)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Write package declaration.
+	_, err = fmt.Fprintf(fd, "package %s\n\n", c.Package)
+	if err != nil {
+		return err
+	}
+
+	// Write assets.
+	if c.Debug {
+		err = writeDebug(fd, toc)
+	} else {
+		err = writeRelease(fd, c, toc)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	// Write table of contents
+	return writeTOC(fd, toc)
 }
 
 // fillTOC recursively finds all the file paths in the given directory tree.

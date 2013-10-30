@@ -1,5 +1,3 @@
-// +build release
-
 package main
 
 func in_b_test_asset() []byte {
@@ -28,4 +26,21 @@ func in_c_test_asset() []byte {
 		0x2f, 0x2f, 0x20, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x20, 0x66, 0x69,
 		0x6c, 0x65, 0x0a,
 	}
+}
+
+// Asset loads and returns the asset for the given name.
+// This returns nil of the asset could not be found.
+func Asset(name string) []byte {
+	if f, ok := _bindata[name]; ok {
+		return f()
+	}
+	return nil
+}
+
+// _bindata is a table, holding each asset generator, mapped to its name.
+var _bindata = map[string]func() []byte{
+	"in/b/test.asset": in_b_test_asset,
+	"in/test.asset":   in_test_asset,
+	"in/a/test.asset": in_a_test_asset,
+	"in/c/test.asset": in_c_test_asset,
 }
