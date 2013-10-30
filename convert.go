@@ -26,7 +26,7 @@ func Translate(c *Config) error {
 	}
 
 	// Locate all the assets.
-	err = findFiles(c.Input, c.Prefix, &toc)
+	err = findFiles(c.Input, c.Prefix, c.Recursive, &toc)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func Translate(c *Config) error {
 // fillTOC recursively finds all the file paths in the given directory tree.
 // They are added to the given map as keys. Values will be safe function names
 // for each file, which will be used when generating the output code.
-func findFiles(dir, prefix string, toc *[]Asset) error {
+func findFiles(dir, prefix string, recursive bool, toc *[]Asset) error {
 	if len(prefix) > 0 {
 		dir, _ = filepath.Abs(dir)
 		prefix, _ = filepath.Abs(prefix)
@@ -95,7 +95,9 @@ func findFiles(dir, prefix string, toc *[]Asset) error {
 		asset.Name = asset.Path
 
 		if file.IsDir() {
-			findFiles(asset.Path, prefix, toc)
+			if recursive {
+				findFiles(asset.Path, prefix, recursive, toc)
+			}
 			continue
 		}
 

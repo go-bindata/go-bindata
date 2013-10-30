@@ -111,6 +111,11 @@ type Config struct {
 	// Only in release mode, will the assets actually be embedded
 	// in the code. The default behaviour is Release mode.
 	Debug bool
+
+	// Recursively process all assets in the input directory and its
+	// sub directories. This defaults to false, so only files in the
+	// input directory itself are read.
+	Recursive bool
 }
 
 // NewConfig returns a default configuration struct.
@@ -120,6 +125,7 @@ func NewConfig() *Config {
 	c.NoMemCopy = false
 	c.NoCompress = false
 	c.Debug = false
+	c.Recursive = false
 	return c
 }
 

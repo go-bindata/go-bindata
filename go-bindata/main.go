@@ -41,6 +41,7 @@ func parseArgs() *bindata.Config {
 	flag.StringVar(&c.Tags, "tags", c.Tags, "Optional set of uild tags to include.")
 	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off asset names.")
 	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")
+	flag.BoolVar(&c.Recursive, "r", c.Recursive, "Recursive processing of the target directory and all its sub-directories.")
 	flag.BoolVar(&c.NoMemCopy, "nomemcopy", c.NoMemCopy, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
 	flag.BoolVar(&c.NoCompress, "nocompress", c.NoCompress, "Assets will *not* be GZIP compressed when this flag is specified.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
