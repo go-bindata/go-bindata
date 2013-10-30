@@ -199,9 +199,7 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) {
 func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) {
 	fmt.Fprintf(w, `var _%s = "`, asset.Func)
 
-	gz := gzip.NewWriter(&StringWriter{Writer: w})
-	io.Copy(gz, r)
-	gz.Close()
+	io.Copy(&StringWriter{Writer: w}, r)
 
 	fmt.Fprintf(w, `"
 
