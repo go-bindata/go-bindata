@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-// writeReleaseHeader writes output file headers with the given build tags.
+// writeReleaseHeader writes output file headers.
 // This targets release builds.
 func writeReleaseHeader(w io.Writer, c *Config) {
 	// Write build tags, if applicable.
@@ -138,7 +138,6 @@ func bindata_read(data []byte, name string) []byte {
 func header_uncompressed_nomemcopy(w io.Writer) {
 	fmt.Fprintf(w, `
 import (
-    "log"
     "reflect"
     "unsafe"
 )
@@ -198,7 +197,22 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) {
 }
 
 func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) {
+	fmt.Fprintf(w, `var _%s = "`, asset.Func)
 
+	gz := gzip.NewWriter(&StringWriter{Writer: w})
+	io.Copy(gz, r)
+	gz.Close()
+
+	fmt.Fprintf(w, `"
+
+func %s() []byte {
+	return bindata_read(
+		_%s,
+		%q,
+	)
+}
+
+`, asset.Func, asset.Func, asset.Name)
 }
 
 func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) {

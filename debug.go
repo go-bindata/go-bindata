@@ -9,7 +9,7 @@ import (
 	"io"
 )
 
-// writeDebugHeader writes output file headers with the given build tags.
+// writeDebugHeader writes output file headers.
 // This targets debug builds.
 func writeDebugHeader(w io.Writer, c *Config) {
 	// Write build tags, if applicable.
