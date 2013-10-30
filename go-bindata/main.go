@@ -18,6 +18,7 @@ func main() {
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "bindata: %v\n", err)
+		os.Exit(1)
 	}
 }
 

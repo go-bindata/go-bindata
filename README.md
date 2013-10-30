@@ -1,13 +1,59 @@
 ## bindata
 
-This tool converts any file into managable Go source code. Useful for embedding
-binary data into a go program. The file data is optionally gzip compressed
-before being converted to a raw byte slice.
+This package converts any file into managable Go source code. Useful for
+embedding binary data into a go program. The file data is optionally gzip
+compressed before being converted to a raw byte slice.
+
+It comes with a command line tool in the `go-bindata` sub directory.
+This tool offers a set of command line options, used to customize the
+output being generated.
 
 
 ### Usage
 
-TODO
+Conversion is done on a tree of files. They are all embedded in a new
+Go source file, along with a table of contents and an `Asset` function,
+which allows quick access to the asset, based on its name.
+
+The simplest invocation generates a `bindata.go` file in the current
+working directory. It includes all assets from the `data` directory and its
+subdirectories.
+
+	$ go-bindata data/
+
+To specify the name of the output file being generated, we use the following:
+
+	$ go-bindata data/ myfile.go
+
+The following paragraphs detail some of the command line options which can 
+supplied to `go-bindata`. These options allow us to customize the layout of
+the generated code.
+
+Refer to the `testdata/out` directory for various output examples from
+the assets in `testdata/in`. Each example uses different command line options.
+
+
+### Debug vs Release builds
+
+When invoking the program with the `-debug` flag, the generated code does
+not actually include the asset data. Instead, it generates function stubs
+which load the data from the original file on disk. The asset API remains
+identical between debug and release builds, so your code will not have to
+change.
+
+This is useful during development when you expect the assets to change often.
+The host application using these assets uses the same API in both cases and
+will not have to care where the actual data comes from.
+
+An example is a Go webserver with some embedded, static web content like
+HTML, JS and CSS files. While developing it, you do not want to rebuild the
+whole server and restart it every time you make a change to a bit of
+javascript. You just want to build and launch the server once. Then just press
+refresh in the browser to see those changes. Embedding the assets with the
+`debug` flag allows you to do just that. When you are finished developing and
+ready for deployment, just re-invoke `go-bindata` without the `-debug` flag.
+It will now embed the latest version of the assets.
+
 
 ### Lower memory footprint
 
@@ -62,9 +108,9 @@ func myfile() []byte {
 
 ### Optional compression
 
-When the `-uncompressed` flag is given, the supplied resource is *not* GZIP compressed
-before being turned into Go code. The data should still be accessed through
-a function call, so nothing changes in the usage of the generated file.
+When the `-nocompress` flag is given, the supplied resource is *not* GZIP
+compressed before being turned into Go code. The data should still be accessed
+through a function call, so nothing changes in the usage of the generated file.
 
 This feature is useful if you do not care for compression, or the supplied
 resource is already compressed. Doing it again would not add any value and may
@@ -73,33 +119,36 @@ even increase the size of the data.
 The default behaviour of the program is to use compression.
 
 
-#### Table of Contents keys
+#### Path prefix stripping
 
-The keys used in the `go_bindata` map, are the same as the input file name passed to `go-bindata`.
-This includes the fully qualified (absolute) path. In most cases, this is not desireable, as it
-puts potentially sensitive information in your code base. For this purpose, the tool supplies
-another command line flag `-prefix`. This accepts a portion of a path name, which should be
-stripped off from the map keys and function names.
+The keys used in the `_bindata` map, are the same as the input file name
+passed to `go-bindata`. This includes the path. In most cases, this is not
+desireable, as it puts potentially sensitive information in your code base.
+For this purpose, the tool supplies another command line flag `-prefix`.
+This accepts a portion of a path name, which should be stripped off from
+the map keys and function names.
 
 For example, running without the `-prefix` flag, we get:
 
-	$ go-bindata /path/to/templates/foo.html
-    
-	go_bindata["/path/to/templates/foo.html"] = path_to_templates_foo_html
+	$ go-bindata /path/to/templates/
+
+	_bindata["/path/to/templates/foo.html"] = path_to_templates_foo_html
 
 Running with the `-prefix` flag, we get:
 
-	$ go-bindata -prefix "/path/to/" /path/to/templates/foo.html
-    
-	go_bindata["templates/foo.html"] = templates_foo_html
+	$ go-bindata -prefix "/path/to/" /path/to/templates/
+
+	_bindata["templates/foo.html"] = templates_foo_html
 
 
 #### Build tags
 
-With the optional -tags flag, you can specify any go build tags that
+With the optional `-tags` flag, you can specify any go build tags that
 must be fulfilled for the output file to be included in a build. This
-is useful for including binary data in multiple formats, where the desired
-format is specified at build time with the appropriate tag(s).
+is useful when including binary data in multiple formats, where the desired
+format is specified at build time with the appropriate tags.
 
 The tags are appended to a `// +build` line in the beginning of the output file
 and must follow the build tags syntax specified by the go tool.
+
+
