@@ -10,7 +10,6 @@ import (
 	"github.com/jteeuwen/go-bindata"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func main() {
@@ -29,19 +28,19 @@ func main() {
 // any of the command line options are incorrect.
 func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
 	var version, quiet bool
-	var tagstr string
 
-	c := new(bindata.Config)
+	c := bindata.NewConfig()
 
 	flag.Usage = func() {
 		fmt.Printf("Usage: %s [options] <input> [<output>]\n\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
-	flag.StringVar(&tagstr, "tags", "", "Comma-separated list of build tags to include.")
-	flag.StringVar(&c.Prefix, "prefix", "", "Optional path prefix to strip off map keys and function names.")
-	flag.BoolVar(&c.NoMemCopy, "nomemcopy", false, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
-	flag.BoolVar(&c.Compress, "compress", false, "Assets will be GZIP compressed when this flag is specified.")
+	flag.StringVar(&c.Tags, "tags", c.Tags, "Comma-separated list of build tags to include.")
+	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off map keys and function names.")
+	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")
+	flag.BoolVar(&c.NoMemCopy, "nomemcopy", c.NoMemCopy, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
+	flag.BoolVar(&c.Compress, "compress", c.Compress, "Assets will be GZIP compressed when this flag is specified.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
 	flag.BoolVar(&quiet, "quiet", false, "Do not print conversion status.")
 	flag.Parse()
@@ -100,13 +99,6 @@ func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
 			fmt.Fprintf(os.Stderr, "Unable to determine current working directory: %v\n", err)
 			os.Exit(1)
 		}
-	}
-
-	// Process build tags.
-	if len(tagstr) > 0 {
-		c.Tags = strings.Split(tagstr, ",")
-	} else {
-		c.Tags = append(c.Tags, "debug")
 	}
 
 	if quiet {

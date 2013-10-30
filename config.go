@@ -6,11 +6,14 @@ package bindata
 
 // Config defines a set of options for the asset conversion.
 type Config struct {
+	// Name of the package to use. Defaults to 'main'.
+	Package string
+
 	// Tags specify a set of optional build tags, which should be
 	// included in the generated output. The tags are appended to a
 	// `// +build` line in the beginning of the output file
 	// and must follow the build tags syntax specified by the go tool.
-	Tags []string
+	Tags string
 
 	// Input defines the directory path, containing all asset files.
 	// This may contain sub directories, which will be included in the
@@ -86,7 +89,16 @@ type Config struct {
 	/*
 	   Compress means the assets are GZIP compressed before being turned
 	   into Go code. The generated function will automatically unzip
-	   the file data when called.
+	   the file data when called. Defaults to true.
 	*/
 	Compress bool
+}
+
+// NewConfig returns a default configuration struct.
+func NewConfig() *Config {
+	c := new(Config)
+	c.Package = "main"
+	c.NoMemCopy = false
+	c.Compress = true
+	return c
 }
