@@ -34,54 +34,17 @@ func Translate(c *Config, pf ProgressFunc) error {
 		return err
 	}
 
-	// Open output files.
-	debug, release, err := openOutput(c.Output)
+	err = writeDebug(c, toc)
 	if err != nil {
 		return err
 	}
 
-	defer func() {
-		debug.Close()
-		release.Close()
-	}()
-
-	// Prepare files -- write package header and build tags.
-	writeDebugHeader(debug, c)
-	writeReleaseHeader(release, c)
-
-	// Convert assets and write them to the output files.
-	var current int
-	for i := range toc {
-		if pf != nil {
-			current++
-			if pf(toc[i].Path, current, len(toc)) {
-				return nil
-			}
-		}
-
-		writeDebug(debug, c, &toc[i])
-		writeRelease(release, c, &toc[i])
-	}
-
-	// Generate TOC file.
-	return nil
-}
-
-// openOutput opens two output files. One for debug code and
-// one for release code.
-func openOutput(dir string) (*os.File, *os.File, error) {
-	debug, err := os.Create(filepath.Join(dir, "bindata_debug.go"))
+	err = writeRelease(c, toc)
 	if err != nil {
-		return nil, nil, err
+		return err
 	}
 
-	release, err := os.Create(filepath.Join(dir, "bindata_release.go"))
-	if err != nil {
-		debug.Close()
-		return nil, nil, err
-	}
-
-	return debug, release, nil
+	return writeTOC(c, toc)
 }
 
 // fillTOC recursively finds all the file paths in the given directory tree.

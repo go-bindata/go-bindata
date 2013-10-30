@@ -9,40 +9,74 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 )
+
+// writeRelease writes the release code file.
+func writeRelease(c *Config, toc []Asset) error {
+	fd, err := os.Create(filepath.Join(c.Output, "bindata_release.go"))
+	if err != nil {
+		return err
+	}
+
+	defer fd.Close()
+
+	err = writeReleaseHeader(fd, c)
+	if err != nil {
+		return err
+	}
+
+	for i := range toc {
+		err = writeReleaseAsset(fd, c, &toc[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 
 // writeReleaseHeader writes output file headers.
 // This targets release builds.
-func writeReleaseHeader(w io.Writer, c *Config) {
+func writeReleaseHeader(w io.Writer, c *Config) error {
+	var err error
+
 	// Write build tags, if applicable.
 	if len(c.Tags) > 0 {
-		fmt.Fprintf(w, "// +build release %s\n\n", c.Tags)
+		_, err = fmt.Fprintf(w, "// +build release %s\n\n", c.Tags)
 	} else {
-		fmt.Fprintf(w, "// +build release\n\n")
+		_, err = fmt.Fprintf(w, "// +build release\n\n")
+	}
+
+	if err != nil {
+		return err
 	}
 
 	// Write package declaration
-	fmt.Fprintf(w, "package %s\n\n", c.Package)
+	_, err = fmt.Fprintf(w, "package %s\n\n", c.Package)
+	if err != nil {
+		return err
+	}
 
 	if c.Compress {
 		if c.NoMemCopy {
-			header_compressed_nomemcopy(w)
+			return header_compressed_nomemcopy(w)
 		} else {
-			header_compressed_memcopy(w)
+			return header_compressed_memcopy(w)
 		}
 	} else {
 		if c.NoMemCopy {
-			header_uncompressed_nomemcopy(w)
+			return header_uncompressed_nomemcopy(w)
 		} else {
-			header_uncompressed_memcopy(w)
+			return header_uncompressed_memcopy(w)
 		}
 	}
 }
 
-// writeRelease write a release entry for the given asset.
+// writeReleaseAsset write a release entry for the given asset.
 // A release entry is a function which embeds and returns
 // the file's byte content.
-func writeRelease(w io.Writer, c *Config, asset *Asset) error {
+func writeReleaseAsset(w io.Writer, c *Config, asset *Asset) error {
 	fd, err := os.Open(asset.Path)
 	if err != nil {
 		return err
@@ -52,23 +86,23 @@ func writeRelease(w io.Writer, c *Config, asset *Asset) error {
 
 	if c.Compress {
 		if c.NoMemCopy {
-			compressed_nomemcopy(w, asset, fd)
+			return compressed_nomemcopy(w, asset, fd)
 		} else {
-			compressed_memcopy(w, asset, fd)
+			return compressed_memcopy(w, asset, fd)
 		}
 	} else {
 		if c.NoMemCopy {
-			uncompressed_nomemcopy(w, asset, fd)
+			return uncompressed_nomemcopy(w, asset, fd)
 		} else {
-			uncompressed_memcopy(w, asset, fd)
+			return uncompressed_memcopy(w, asset, fd)
 		}
 	}
 
 	return nil
 }
 
-func header_compressed_nomemcopy(w io.Writer) {
-	fmt.Fprintf(w, `
+func header_compressed_nomemcopy(w io.Writer) error {
+	_, err := fmt.Fprintf(w, `
 import (
     "bytes"
     "compress/gzip"
@@ -104,10 +138,11 @@ func bindata_read(data, name string) []byte {
 }
 
 `)
+	return err
 }
 
-func header_compressed_memcopy(w io.Writer) {
-	fmt.Fprintf(w, `
+func header_compressed_memcopy(w io.Writer) error {
+	_, err := fmt.Fprintf(w, `
 import (
     "bytes"
     "compress/gzip"
@@ -133,10 +168,11 @@ func bindata_read(data []byte, name string) []byte {
 }
 
 `)
+	return err
 }
 
-func header_uncompressed_nomemcopy(w io.Writer) {
-	fmt.Fprintf(w, `
+func header_uncompressed_nomemcopy(w io.Writer) error {
+	_, err := fmt.Fprintf(w, `
 import (
     "reflect"
     "unsafe"
@@ -154,20 +190,29 @@ func bindata_read(data, name string) []byte {
 }
 
 `)
+	return err
 }
 
-func header_uncompressed_memcopy(w io.Writer) {
+func header_uncompressed_memcopy(w io.Writer) error {
 	// nop -- We require no imports or helper functions.
+	return nil
 }
 
-func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) {
-	fmt.Fprintf(w, `var _%s = "`, asset.Func)
+func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
+	_, err := fmt.Fprintf(w, `var _%s = "`, asset.Func)
+	if err != nil {
+		return err
+	}
 
 	gz := gzip.NewWriter(&StringWriter{Writer: w})
-	io.Copy(gz, r)
+	_, err = io.Copy(gz, r)
 	gz.Close()
 
-	fmt.Fprintf(w, `"
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintf(w, `"
 
 func %s() []byte {
 	return bindata_read(
@@ -177,31 +222,47 @@ func %s() []byte {
 }
 
 `, asset.Func, asset.Func, asset.Name)
+	return err
 }
 
-func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) {
-	fmt.Fprintf(w, `func %s() []byte {
+func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
+	_, err := fmt.Fprintf(w, `func %s() []byte {
 	return bindata_read([]byte{`, asset.Func)
 
+	if err != nil {
+		return nil
+	}
+
 	gz := gzip.NewWriter(&ByteWriter{Writer: w})
-	io.Copy(gz, r)
+	_, err = io.Copy(gz, r)
 	gz.Close()
 
-	fmt.Fprintf(w, `
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintf(w, `
 		},
 		%q,
 	)
 }
 
 `, asset.Name)
+	return err
 }
 
-func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) {
-	fmt.Fprintf(w, `var _%s = "`, asset.Func)
+func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
+	_, err := fmt.Fprintf(w, `var _%s = "`, asset.Func)
+	if err != nil {
+		return err
+	}
 
-	io.Copy(&StringWriter{Writer: w}, r)
+	_, err = io.Copy(&StringWriter{Writer: w}, r)
+	if err != nil {
+		return err
+	}
 
-	fmt.Fprintf(w, `"
+	_, err = fmt.Fprintf(w, `"
 
 func %s() []byte {
 	return bindata_read(
@@ -211,17 +272,25 @@ func %s() []byte {
 }
 
 `, asset.Func, asset.Func, asset.Name)
+	return err
 }
 
-func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) {
-	fmt.Fprintf(w, `func %s() []byte {
+func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
+	_, err := fmt.Fprintf(w, `func %s() []byte {
 	return []byte{`, asset.Func)
+	if err != nil {
+		return err
+	}
 
-	io.Copy(&ByteWriter{Writer: w}, r)
+	_, err = io.Copy(&ByteWriter{Writer: w}, r)
+	if err != nil {
+		return err
+	}
 
-	fmt.Fprintf(w, `
+	_, err = fmt.Fprintf(w, `
 	}
 }
 
 `)
+	return err
 }

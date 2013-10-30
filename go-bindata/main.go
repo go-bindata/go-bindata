@@ -40,7 +40,7 @@ func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
 	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off map keys and function names.")
 	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")
 	flag.BoolVar(&c.NoMemCopy, "nomemcopy", c.NoMemCopy, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
-	flag.BoolVar(&c.Compress, "compress", c.Compress, "Assets will be GZIP compressed when this flag is specified.")
+	flag.BoolVar(&c.Compress, "nocompress", !c.Compress, "Assets will /not/ be GZIP compressed when this flag is specified.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
 	flag.BoolVar(&quiet, "quiet", false, "Do not print conversion status.")
 	flag.Parse()
@@ -100,6 +100,9 @@ func parseArgs() (*bindata.Config, bindata.ProgressFunc) {
 			os.Exit(1)
 		}
 	}
+
+	// The command line flag supplies the inversion of this value.
+	c.Compress = !c.Compress
 
 	if quiet {
 		return c, nil
