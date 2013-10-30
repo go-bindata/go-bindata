@@ -35,6 +35,13 @@ func testdata_in_b_test_asset() []byte {
 	)
 }
 
+func testdata_in_test_asset() []byte {
+	return bindata_read(
+		"/a/code/go/src/github.com/jteeuwen/go-bindata/testdata/in/test.asset",
+		"../testdata/in/test.asset",
+	)
+}
+
 func testdata_in_a_test_asset() []byte {
 	return bindata_read(
 		"/a/code/go/src/github.com/jteeuwen/go-bindata/testdata/in/a/test.asset",
