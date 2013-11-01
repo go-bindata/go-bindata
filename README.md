@@ -122,7 +122,7 @@ even increase the size of the data.
 The default behaviour of the program is to use compression.
 
 
-#### Path prefix stripping
+### Path prefix stripping
 
 The keys used in the `_bindata` map, are the same as the input file name
 passed to `go-bindata`. This includes the path. In most cases, this is not
@@ -144,7 +144,7 @@ Running with the `-prefix` flag, we get:
 	_bindata["templates/foo.html"] = templates_foo_html
 
 
-#### Build tags
+### Build tags
 
 With the optional `-tags` flag, you can specify any go build tags that
 must be fulfilled for the output file to be included in a build. This
