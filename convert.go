@@ -14,7 +14,7 @@ import (
 )
 
 // Translate reads assets from an input directory, converts them
-// to Go code and writes new files to the output file specified
+// to Go code and writes new files to the output specified
 // in the given configuration.
 func Translate(c *Config) error {
 	var toc []Asset
@@ -68,7 +68,7 @@ func Translate(c *Config) error {
 	return writeTOC(fd, toc)
 }
 
-// fillTOC recursively finds all the file paths in the given directory tree.
+// findFiles recursively finds all the file paths in the given directory tree.
 // They are added to the given map as keys. Values will be safe function names
 // for each file, which will be used when generating the output code.
 func findFiles(dir, prefix string, recursive bool, toc *[]Asset) error {
