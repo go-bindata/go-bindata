@@ -149,8 +149,19 @@ func (c *Config) validate() error {
 	}
 
 	stat, err = os.Lstat(c.Output)
-	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("Output path: %v", err)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return fmt.Errorf("Output path: %v", err)
+		}
+
+		// File does not exist. This is fine, just make
+		// sure the directory it is to be in exists.
+		dir, _ := filepath.Split(c.Output)
+		err = os.MkdirAll(dir, 0744)
+
+		if err != nil {
+			return fmt.Errorf("Create output directory: %v", err)
+		}
 	}
 
 	if stat != nil && stat.IsDir() {
