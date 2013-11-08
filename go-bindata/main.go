@@ -60,7 +60,7 @@ func parseArgs() *bindata.Config {
 
 	input := filepath.Clean(flag.Arg(0))
 
-	c.Input = parseInput(input)
+	c.Input = []bindata.InputConfig{parseInput(input)}
 	if flag.NArg() > 1 {
 		c.Output = filepath.Clean(flag.Arg(1))
 	}

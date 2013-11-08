@@ -34,7 +34,7 @@ type Config struct {
 
 	// Input defines the directory path, containing all asset files as
 	// well as whether to recursively process assets in any sub directories.
-	Input InputConfig
+	Input []InputConfig
 
 	// Output defines the output file for the generated code.
 	// If left empty, this defaults to 'bindata.go' in the current
@@ -140,13 +140,15 @@ func (c *Config) validate() error {
 		return fmt.Errorf("Missing package name")
 	}
 
-	stat, err := os.Lstat(c.Input.Path)
-	if err != nil {
-		return fmt.Errorf("Input path: %v", err)
-	}
+	for _, input := range c.Input {
+		stat, err := os.Lstat(input.Path)
+		if err != nil {
+			return fmt.Errorf("Failed to stat input path '%s': %v", input.Path, err)
+		}
 
-	if !stat.IsDir() {
-		return fmt.Errorf("Input path is not a directory.")
+		if !stat.IsDir() {
+			return fmt.Errorf("Input path '%s' is not a directory.", input.Path)
+		}
 	}
 
 	if len(c.Output) == 0 {
@@ -158,7 +160,7 @@ func (c *Config) validate() error {
 		c.Output = filepath.Join(cwd, "bindata.go")
 	}
 
-	stat, err = os.Lstat(c.Output)
+	stat, err := os.Lstat(c.Output)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return fmt.Errorf("Output path: %v", err)
