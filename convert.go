@@ -26,7 +26,7 @@ func Translate(c *Config) error {
 	}
 
 	// Locate all the assets.
-	err = findFiles(c.Input, c.Prefix, c.Recursive, &toc)
+	err = findFiles(c.Input.Path, c.Prefix, c.Input.Recursive, &toc)
 	if err != nil {
 		return err
 	}

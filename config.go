@@ -10,6 +10,17 @@ import (
 	"path/filepath"
 )
 
+// InputConfig defines options on a asset directory to be convert.
+type InputConfig struct {
+	// Path defines a directory containing asset files to be included
+	// in the generated output.
+	Path string
+
+	// Recusive defines whether subdirectories of Path
+	// should be recursively included in the conversion.
+	Recursive bool
+}
+
 // Config defines a set of options for the asset conversion.
 type Config struct {
 	// Name of the package to use. Defaults to 'main'.
@@ -21,10 +32,9 @@ type Config struct {
 	// and must follow the build tags syntax specified by the go tool.
 	Tags string
 
-	// Input defines the directory path, containing all asset files.
-	// This may contain sub directories, which will be included in the
-	// conversion.
-	Input string
+	// Input defines the directory path, containing all asset files as
+	// well as whether to recursively process assets in any sub directories.
+	Input InputConfig
 
 	// Output defines the output file for the generated code.
 	// If left empty, this defaults to 'bindata.go' in the current
@@ -130,7 +140,7 @@ func (c *Config) validate() error {
 		return fmt.Errorf("Missing package name")
 	}
 
-	stat, err := os.Lstat(c.Input)
+	stat, err := os.Lstat(c.Input.Path)
 	if err != nil {
 		return fmt.Errorf("Input path: %v", err)
 	}
