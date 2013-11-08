@@ -30,16 +30,17 @@ func writeTOC(w io.Writer, toc []Asset) error {
 func writeTOCHeader(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `
 // Asset loads and returns the asset for the given name.
-// This returns nil of the asset could not be found.
-func Asset(name string) []byte {
+// It returns an error if the asset could not be found or
+// could not be loaded.
+func Asset(name string) ([]byte, error) {
 	if f, ok := _bindata[name]; ok {
 		return f()
 	}
-	return nil
+	return nil, fmt.Errorf("Asset %%s not found", name)
 }
 
 // _bindata is a table, holding each asset generator, mapped to its name.
-var _bindata = map[string] func() []byte {
+var _bindata = map[string] func() ([]byte, error) {
 `)
 	return err
 }
