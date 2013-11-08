@@ -54,7 +54,8 @@ func parseArgs() *bindata.Config {
 
 	// Make sure we have in/output paths.
 	if flag.NArg() == 0 {
-		fmt.Fprintf(os.Stderr, "Missing input path.\n")
+		fmt.Fprintf(os.Stderr, "Missing <input dir>\n\n")
+		flag.Usage()
 		os.Exit(1)
 	}
 
