@@ -78,13 +78,13 @@ func header_compressed_nomemcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
     "bytes"
     "compress/gzip"
+    "fmt"
     "io"
-    "log"
     "reflect"
     "unsafe"
 )
 
-func bindata_read(data, name string) []byte {
+func bindata_read(data, name string) ([]byte, error) {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
 	b := empty[:]
@@ -95,7 +95,7 @@ func bindata_read(data, name string) []byte {
 
 	gz, err := gzip.NewReader(bytes.NewBuffer(b))
 	if err != nil {
-		log.Fatalf("Read %%q: %%v", name, err)
+		return nil, fmt.Errorf("Read %%q: %%v", name, err)
 	}
 
 	var buf bytes.Buffer
@@ -103,10 +103,10 @@ func bindata_read(data, name string) []byte {
 	gz.Close()
 
 	if err != nil {
-		log.Fatalf("Read %%q: %%v", name, err)
+		return nil, fmt.Errorf("Read %%q: %%v", name, err)
 	}
 
-	return buf.Bytes()
+	return buf.Bytes(), nil
 }
 
 `)
@@ -117,14 +117,14 @@ func header_compressed_memcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
     "bytes"
     "compress/gzip"
+    "fmt"
     "io"
-    "log"
 )
 
-func bindata_read(data []byte, name string) []byte {
+func bindata_read(data []byte, name string) ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
-		log.Fatalf("Read %%q: %%v", name, err)
+		return nil, fmt.Errorf("Read %%q: %%v", name, err)
 	}
 
 	var buf bytes.Buffer
@@ -132,10 +132,10 @@ func bindata_read(data []byte, name string) []byte {
 	gz.Close()
 
 	if err != nil {
-		log.Fatalf("Read %%q: %%v", name, err)
+		return nil, fmt.Errorf("Read %%q: %%v", name, err)
 	}
 
-	return buf.Bytes()
+	return buf.Bytes(), nil
 }
 
 `)
@@ -144,11 +144,12 @@ func bindata_read(data []byte, name string) []byte {
 
 func header_uncompressed_nomemcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
+    "fmt"
     "reflect"
     "unsafe"
 )
 
-func bindata_read(data, name string) []byte {
+func bindata_read(data, name string) ([]byte, error) {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
 	b := empty[:]
@@ -156,7 +157,7 @@ func bindata_read(data, name string) []byte {
 	bx.Data = sx.Data
 	bx.Len = len(data)
 	bx.Cap = bx.Len
-	return b
+	return b, nil
 }
 
 `)
@@ -164,8 +165,11 @@ func bindata_read(data, name string) []byte {
 }
 
 func header_uncompressed_memcopy(w io.Writer) error {
-	// nop -- We require no imports or helper functions.
-	return nil
+	_, err := fmt.Fprintf(w, `import (
+    "fmt"
+)
+`)
+	return err
 }
 
 func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
@@ -184,7 +188,7 @@ func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `"
 
-func %s() []byte {
+func %s() ([]byte, error) {
 	return bindata_read(
 		_%s,
 		%q,
@@ -196,7 +200,7 @@ func %s() []byte {
 }
 
 func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
-	_, err := fmt.Fprintf(w, `func %s() []byte {
+	_, err := fmt.Fprintf(w, `func %s() ([]byte, error) {
 	return bindata_read([]byte{`, asset.Func)
 
 	if err != nil {
@@ -234,7 +238,7 @@ func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `"
 
-func %s() []byte {
+func %s() ([]byte, error) {
 	return bindata_read(
 		_%s,
 		%q,
@@ -246,7 +250,7 @@ func %s() []byte {
 }
 
 func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
-	_, err := fmt.Fprintf(w, `func %s() []byte {
+	_, err := fmt.Fprintf(w, `func %s() ([]byte, error) {
 	return []byte{`, asset.Func)
 	if err != nil {
 		return err
@@ -258,7 +262,7 @@ func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	}
 
 	_, err = fmt.Fprintf(w, `
-	}
+	}, nil
 }
 
 `)

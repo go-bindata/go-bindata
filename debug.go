@@ -30,29 +30,18 @@ func writeDebug(w io.Writer, toc []Asset) error {
 // This targets debug builds.
 func writeDebugHeader(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
-	"bytes"
-	"io"
-	"log"
-	"os"
+	"fmt"
+	"io/ioutil"
 )
 
-// bindata_read reads the given file from disk.
-// It panics if anything went wrong.
-func bindata_read(path, name string) []byte {
-	fd, err := os.Open(path)
+// bindata_read reads the given file from disk. It returns
+// an error on failure.
+func bindata_read(path, name string) ([]byte, error) {
+	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("Read %%s: %%v", name, err)
+		err = fmt.Errorf("Error reading asset %%s at %%s: %%v", name, path, err)
 	}
-
-	defer fd.Close()
-
-	var buf bytes.Buffer
-	_, err = io.Copy(&buf, fd)
-	if err != nil {
-		log.Fatalf("Read %%s: %%v", name, err)
-	}
-
-	return buf.Bytes()
+	return buf, err
 }
 
 `)
@@ -66,7 +55,7 @@ func writeDebugAsset(w io.Writer, asset *Asset) error {
 	_, err := fmt.Fprintf(w, `
 // %s reads file data from disk.
 // It panics if something went wrong in the process.
-func %s() []byte {
+func %s() ([]byte, error) {
 	return bindata_read(
 		%q,
 		%q,
