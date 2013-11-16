@@ -11,7 +11,7 @@ output being generated.
 
 ### Usage
 
-Conversion is done on a set of files. They are all embedded in a new
+Conversion is done on one or more sets of files. They are all embedded in a new
 Go source file, along with a table of contents and an `Asset` function,
 which allows quick access to the asset, based on its name.
 
@@ -20,20 +20,25 @@ working directory. It includes all assets from the `data` directory.
 
 	$ go-bindata data/
 
-To include all input sub-directories recursively, add the `-r` flag,
-otherwise it will only consider files in the input directory itself.
+To include all input sub-directories recursively, use the elipsis postfix
+as defined for Go import paths. Otherwise it will only consider assets in the
+input directory itself.
 
-	$ go-bindata -r data/
+	$ go-bindata data/...
 
 To specify the name of the output file being generated, we use the following:
 
-	$ go-bindata data/ myfile.go
+	$ go-bindata -o myfile.go data/
+
+Multiple input directories can be specified if necessary.
+
+	$ go-bindata dir1/... /path/to/dir3/... dir3
+
 
 The following paragraphs detail some of the command line options which can 
-supplied to `go-bindata`.
-
-Refer to the `testdata/out` directory for various output examples from
-the assets in `testdata/in`. Each example uses different command line options.
+supplied to `go-bindata`. Refer to the `testdata/out` directory for various
+output examples from the assets in `testdata/in`. Each example uses different
+command line options.
 
 
 ### Debug vs Release builds
