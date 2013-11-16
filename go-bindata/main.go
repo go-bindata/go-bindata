@@ -53,15 +53,20 @@ func parseArgs() *bindata.Config {
 		os.Exit(0)
 	}
 
-	// Make sure we have in/output paths.
+	// Make sure we have input paths.
 	if flag.NArg() == 0 {
 		fmt.Fprintf(os.Stderr, "Missing <input dir>\n\n")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	input := filepath.Clean(flag.Arg(0))
-	c.Input = []bindata.InputConfig{parseInput(input)}
+	// Create input configurations.
+	c.Input = make([]bindata.InputConfig, flag.NArg())
+	for i := range c.Input {
+		c.Input[i] = parseInput(flag.Arg(i))
+		fmt.Printf("%v\n", c.Input[i])
+	}
+
 	return c
 }
 
@@ -73,9 +78,15 @@ func parseArgs() *bindata.Config {
 //      /path/to/bar        -> (/path/to/bar, false)
 func parseInput(path string) bindata.InputConfig {
 	if strings.HasSuffix(path, "/...") {
-		return bindata.InputConfig{Path: path[:len(path)-4], Recursive: true}
+		return bindata.InputConfig{
+			Path:      filepath.Clean(path[:len(path)-4]),
+			Recursive: true,
+		}
 	} else {
-		return bindata.InputConfig{Path: path, Recursive: false}
+		return bindata.InputConfig{
+			Path:      filepath.Clean(path),
+			Recursive: false,
+		}
 	}
 
 }
