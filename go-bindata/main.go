@@ -34,7 +34,7 @@ func parseArgs() *bindata.Config {
 	c := bindata.NewConfig()
 
 	flag.Usage = func() {
-		fmt.Printf("Usage: %s [options] <input dir> [<output file>]\n\n", os.Args[0])
+		fmt.Printf("Usage: %s [options] <input directories>\n\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
@@ -44,6 +44,7 @@ func parseArgs() *bindata.Config {
 	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")
 	flag.BoolVar(&c.NoMemCopy, "nomemcopy", c.NoMemCopy, "Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.")
 	flag.BoolVar(&c.NoCompress, "nocompress", c.NoCompress, "Assets will *not* be GZIP compressed when this flag is specified.")
+	flag.StringVar(&c.Output, "o", c.Output, "Optional name of the output file to be generated.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
 	flag.Parse()
 
@@ -60,12 +61,7 @@ func parseArgs() *bindata.Config {
 	}
 
 	input := filepath.Clean(flag.Arg(0))
-
 	c.Input = []bindata.InputConfig{parseInput(input)}
-	if flag.NArg() > 1 {
-		c.Output = filepath.Clean(flag.Arg(1))
-	}
-
 	return c
 }
 

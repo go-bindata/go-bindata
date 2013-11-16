@@ -130,6 +130,7 @@ func NewConfig() *Config {
 	c.NoCompress = false
 	c.Debug = false
 	c.Recursive = false
+	c.Output = "./bindata.go"
 	return c
 }
 
