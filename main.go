@@ -40,7 +40,7 @@ func main() {
 	fs, err := os.Open(in)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-		return
+		os.Exit(1)
 	}
 
 	defer fs.Close()
@@ -48,7 +48,7 @@ func main() {
 	fd, err := os.Create(*out)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-		return
+		os.Exit(1)
 	}
 
 	defer fd.Close()
@@ -68,7 +68,7 @@ func main() {
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "[e] %s\n", err)
-			return
+			os.Exit(1)
 		}
 
 		bindata.WriteTOCInit(fd, in, *prefix, *funcname)
@@ -91,10 +91,7 @@ func parseArgs() {
 	pipe = flag.NArg() == 0
 
 	if !pipe {
-		sepsuffix := false
-		if strings.HasSuffix(*prefix, string(filepath.Separator)) {
-			sepsuffix = true
-		}
+		sepsuffix := strings.HasSuffix(*prefix, string(filepath.Separator))
 		*prefix, _ = filepath.Abs(filepath.Clean(*prefix))
 		if sepsuffix {
 			*prefix += string(filepath.Separator)
