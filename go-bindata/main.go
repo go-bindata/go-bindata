@@ -64,7 +64,6 @@ func parseArgs() *bindata.Config {
 	c.Input = make([]bindata.InputConfig, flag.NArg())
 	for i := range c.Input {
 		c.Input[i] = parseInput(flag.Arg(i))
-		fmt.Printf("%v\n", c.Input[i])
 	}
 
 	return c
