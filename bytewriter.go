@@ -10,9 +10,9 @@ import (
 )
 
 var (
-        newline    = []byte{'\n'}
-        dataindent = []byte{'\t', '\t'}
-        space      = []byte{' '}
+	newline    = []byte{'\n'}
+	dataindent = []byte{'\t', '\t'}
+	space      = []byte{' '}
 )
 
 type ByteWriter struct {
