@@ -39,7 +39,7 @@ To specify the name of the output file being generated, we use the following:
 
 Multiple input directories can be specified if necessary.
 
-	$ go-bindata dir1/... /path/to/dir3/... dir3
+	$ go-bindata dir1/... /path/to/dir2/... dir3
 
 
 The following paragraphs detail some of the command line options which can 
