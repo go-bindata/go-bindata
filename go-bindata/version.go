@@ -2,7 +2,7 @@
 // license. Its contents can be found at:
 // http://creativecommons.org/publicdomain/zero/1.0/
 
-package bindata
+package main
 
 import (
 	"fmt"
@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	AppName         = "bindata"
-	AppVersionMajor = 2
+	AppName         = "go-bindata"
+	AppVersionMajor = 3
 	AppVersionMinor = 1
 )
 
