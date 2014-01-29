@@ -48,6 +48,19 @@ output examples from the assets in `testdata/in`. Each example uses different
 command line options.
 
 
+### Accessing an asset
+
+To access asset data, we use the `Asset(string) []byte` function which
+is included in the generated output.
+
+	data := Asset("pub/style/foo.css")
+	if len(data) == 0 {
+		// Asset was not found.
+	}
+	
+	// use asset data
+
+
 ### Debug vs Release builds
 
 When invoking the program with the `-debug` flag, the generated code does
