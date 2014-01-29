@@ -5,6 +5,7 @@
 package bindata
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -41,25 +42,29 @@ func Translate(c *Config) error {
 
 	defer fd.Close()
 
+	// Create a buffered writer for better performance.
+	bfd := bufio.NewWriter(fd)
+	defer bfd.Flush()
+
 	// Write build tags, if applicable.
 	if len(c.Tags) > 0 {
-		_, err = fmt.Fprintf(fd, "// +build %s\n\n", c.Tags)
+		_, err = fmt.Fprintf(bfd, "// +build %s\n\n", c.Tags)
 		if err != nil {
 			return err
 		}
 	}
 
 	// Write package declaration.
-	_, err = fmt.Fprintf(fd, "package %s\n\n", c.Package)
+	_, err = fmt.Fprintf(bfd, "package %s\n\n", c.Package)
 	if err != nil {
 		return err
 	}
 
 	// Write assets.
 	if c.Debug {
-		err = writeDebug(fd, toc)
+		err = writeDebug(bfd, toc)
 	} else {
-		err = writeRelease(fd, c, toc)
+		err = writeRelease(bfd, c, toc)
 	}
 
 	if err != nil {
@@ -67,7 +72,7 @@ func Translate(c *Config) error {
 	}
 
 	// Write table of contents
-	return writeTOC(fd, toc)
+	return writeTOC(bfd, toc)
 }
 
 // findFiles recursively finds all the file paths in the given directory tree.
