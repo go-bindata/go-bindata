@@ -9,6 +9,13 @@ This tool offers a set of command line options, used to customize the
 output being generated.
 
 
+### Installation
+
+To install the library and command line program, use the following:
+
+	go get github.com/jteeuwen/go-bindata/...
+
+
 ### Usage
 
 Conversion is done on one or more sets of files. They are all embedded in a new
