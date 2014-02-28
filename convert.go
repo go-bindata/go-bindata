@@ -82,6 +82,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset) error {
 	if len(prefix) > 0 {
 		dir, _ = filepath.Abs(dir)
 		prefix, _ = filepath.Abs(prefix)
+		prefix = filepath.ToSlash(prefix)
 	}
 
 	fd, err := os.Open(dir)
@@ -99,7 +100,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset) error {
 	for _, file := range list {
 		var asset Asset
 		asset.Path = filepath.Join(dir, file.Name())
-		asset.Name = asset.Path
+		asset.Name = filepath.ToSlash(asset.Path)
 
 		if file.IsDir() {
 			if recursive {
