@@ -47,6 +47,9 @@ supplied to `go-bindata`. Refer to the `testdata/out` directory for various
 output examples from the assets in `testdata/in`. Each example uses different
 command line options.
 
+To ignore files, pass in regexes using -ignore, for example:
+
+    $ go-bindata -ignore=\\.gitignore data/...
 
 ### Accessing an asset
 
