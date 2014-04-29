@@ -10,6 +10,7 @@ import (
 	"github.com/jteeuwen/go-bindata"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -46,7 +47,17 @@ func parseArgs() *bindata.Config {
 	flag.BoolVar(&c.NoCompress, "nocompress", c.NoCompress, "Assets will *not* be GZIP compressed when this flag is specified.")
 	flag.StringVar(&c.Output, "o", c.Output, "Optional name of the output file to be generated.")
 	flag.BoolVar(&version, "version", false, "Displays version information.")
+
+	ignore := make([]string, 0)
+	flag.Var((*AppendSliceValue)(&ignore), "ignore", "Regex pattern to ignore")
+
 	flag.Parse()
+
+	patterns := make([]*regexp.Regexp, 0)
+	for _, pattern := range ignore {
+		patterns = append(patterns, regexp.MustCompile(pattern))
+	}
+	c.Ignore = patterns
 
 	if version {
 		fmt.Printf("%s\n", Version())
