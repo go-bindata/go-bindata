@@ -179,10 +179,12 @@ func (c *Config) validate() error {
 		// File does not exist. This is fine, just make
 		// sure the directory it is to be in exists.
 		dir, _ := filepath.Split(c.Output)
-		err = os.MkdirAll(dir, 0744)
+		if dir != "" {
+			err = os.MkdirAll(dir, 0744)
 
-		if err != nil {
-			return fmt.Errorf("Create output directory: %v", err)
+			if err != nil {
+				return fmt.Errorf("Create output directory: %v", err)
+			}
 		}
 	}
 
