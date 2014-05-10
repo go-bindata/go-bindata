@@ -70,7 +70,7 @@ good to keep in mind:
   > the rest of the API. This addresses issue #32
   
   Do not pile a lot of unrelated changes into a single commit.
-  Pick and chose only those changes for a single commit, which are
+  Pick and choose only those changes for a single commit, which are
   directly related. We would much rather see a hundred commits
   saying nothing but `"Runs go fmt"` in between any real fixes
   than have these style changes embedded in those real fixes.
