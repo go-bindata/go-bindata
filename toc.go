@@ -39,6 +39,15 @@ func Asset(name string) ([]byte, error) {
 	return nil, fmt.Errorf("Asset %%s not found", name)
 }
 
+// AssetNames returns the names of the assets.
+func AssetNames() []string {
+	names := make([]string, 0, len(_bindata))
+	for name := range _bindata {
+		names = append(names, name)
+	}
+	return names
+}
+
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string] func() ([]byte, error) {
 `)
