@@ -42,8 +42,8 @@ func Asset(name string) ([]byte, error) {
 // AssetNames returns the names of the assets.
 func AssetNames() []string {
 	names := make([]string, 0, len(_bindata))
-	for name, _ := range _bindata {
-		names= append(names, name)
+	for name := range _bindata {
+		names = append(names, name)
 	}
 	return names
 }
