@@ -62,8 +62,7 @@ func writeTOCAsset(w io.Writer, asset *Asset) error {
 
 // writeTOCFooter writes the table of contents file footer.
 func writeTOCFooter(w io.Writer) error {
-	_, err := fmt.Fprintf(w, `
-}
+	_, err := fmt.Fprintf(w, `}
 `)
 	return err
 }
