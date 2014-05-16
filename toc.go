@@ -33,7 +33,8 @@ func writeTOCHeader(w io.Writer) error {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func Asset(name string) ([]byte, error) {
-	if f, ok := _bindata[name]; ok {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
 		return f()
 	}
 	return nil, fmt.Errorf("Asset %%s not found", name)
