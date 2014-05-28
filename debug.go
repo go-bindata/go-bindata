@@ -52,14 +52,14 @@ func bindata_read(path, name string) ([]byte, error) {
 // A debug entry is simply a function which reads the asset from
 // the original file (e.g.: from disk).
 func writeDebugAsset(w io.Writer, asset *Asset) error {
-	_, err := fmt.Fprintf(w, `
-// %s reads file data from disk. It returns an error on failure.
+	_, err := fmt.Fprintf(w, `// %s reads file data from disk. It returns an error on failure.
 func %s() ([]byte, error) {
 	return bindata_read(
 		%q,
 		%q,
 	)
 }
+
 `, asset.Func, asset.Func, asset.Path, asset.Name)
 	return err
 }

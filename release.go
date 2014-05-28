@@ -76,13 +76,13 @@ func writeReleaseAsset(w io.Writer, c *Config, asset *Asset) error {
 
 func header_compressed_nomemcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
-    "bytes"
-    "compress/gzip"
-    "fmt"
-    "io"
-    "reflect"
-    "strings"
-    "unsafe"
+	"bytes"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"reflect"
+	"strings"
+	"unsafe"
 )
 
 func bindata_read(data, name string) ([]byte, error) {
@@ -116,11 +116,11 @@ func bindata_read(data, name string) ([]byte, error) {
 
 func header_compressed_memcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
-    "bytes"
-    "compress/gzip"
-    "fmt"
-    "io"
-    "strings"
+	"bytes"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"strings"
 )
 
 func bindata_read(data []byte, name string) ([]byte, error) {
@@ -146,10 +146,10 @@ func bindata_read(data []byte, name string) ([]byte, error) {
 
 func header_uncompressed_nomemcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
-    "fmt"
-    "reflect"
-    "strings"
-    "unsafe"
+	"fmt"
+	"reflect"
+	"strings"
+	"unsafe"
 )
 
 func bindata_read(data, name string) ([]byte, error) {
@@ -169,8 +169,8 @@ func bindata_read(data, name string) ([]byte, error) {
 
 func header_uncompressed_memcopy(w io.Writer) error {
 	_, err := fmt.Fprintf(w, `import (
-    "fmt"
-    "strings"
+	"fmt"
+	"strings"
 )
 `)
 	return err
@@ -220,7 +220,7 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	}
 
 	_, err = fmt.Fprintf(w, `
-		},
+	},
 		%q,
 	)
 }
