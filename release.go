@@ -70,8 +70,6 @@ func writeReleaseAsset(w io.Writer, c *Config, asset *Asset) error {
 			return compressed_memcopy(w, asset, fd)
 		}
 	}
-
-	return nil
 }
 
 func header_compressed_nomemcopy(w io.Writer) error {
