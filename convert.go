@@ -72,7 +72,11 @@ func Translate(c *Config) error {
 	}
 
 	// Write table of contents
-	return writeTOC(bfd, toc)
+	if err := writeTOC(bfd, toc); err != nil {
+		return err
+	}
+	// Write hierarchical tree of assets
+	return writeTOCTree(bfd, toc)
 }
 
 // findFiles recursively finds all the file paths in the given directory tree.
