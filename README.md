@@ -182,4 +182,8 @@ format is specified at build time with the appropriate tags.
 The tags are appended to a `// +build` line in the beginning of the output file
 and must follow the build tags syntax specified by the go tool.
 
+### Related projects
+
+[go-bindata-assetfs](https://github.com/elazarl/go-bindata-assetfs#readme) - 
+implements `http.FileSystem` interface. Allows you to serve assets with `net/http`.
 
