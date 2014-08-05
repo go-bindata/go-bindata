@@ -151,13 +151,9 @@ func (c *Config) validate() error {
 	}
 
 	for _, input := range c.Input {
-		stat, err := os.Lstat(input.Path)
+		_, err := os.Lstat(input.Path)
 		if err != nil {
 			return fmt.Errorf("Failed to stat input path '%s': %v", input.Path, err)
-		}
-
-		if !stat.IsDir() {
-			return fmt.Errorf("Input path '%s' is not a directory.", input.Path)
 		}
 	}
 

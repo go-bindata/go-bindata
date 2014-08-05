@@ -89,16 +89,28 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 		prefix = filepath.ToSlash(prefix)
 	}
 
-	fd, err := os.Open(dir)
+	fi, err := os.Stat(dir)
 	if err != nil {
 		return err
 	}
 
-	defer fd.Close()
+	var list []os.FileInfo
 
-	list, err := fd.Readdir(0)
-	if err != nil {
-		return err
+	if !fi.IsDir() {
+		dir = ""
+		list = []os.FileInfo{fi}
+	} else {
+		fd, err := os.Open(dir)
+		if err != nil {
+			return err
+		}
+
+		defer fd.Close()
+
+		list, err = fd.Readdir(0)
+		if err != nil {
+			return err
+		}
 	}
 
 	for _, file := range list {
