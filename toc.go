@@ -90,14 +90,17 @@ func writeTOCTree(w io.Writer, toc []Asset) error {
 // then AssetDir("data") would return []string{"foo.txt", "img"}
 // AssetDir("data/img") would return []string{"a.png", "b.png"}
 // AssetDir("foo.txt") and AssetDir("notexist") would return an error
+// AssetDir("") will return []string{"data"}.
 func AssetDir(name string) ([]string, error) {
-	cannonicalName := strings.Replace(name, "\\", "/", -1)
-	pathList := strings.Split(cannonicalName, "/")
 	node := _bintree
-	for _, p := range pathList {
-		node = node.Children[p]
-		if node == nil {
-			return nil, fmt.Errorf("Asset %%s not found", name)
+	if len(name) != 0 {
+		cannonicalName := strings.Replace(name, "\\", "/", -1)
+		pathList := strings.Split(cannonicalName, "/")
+		for _, p := range pathList {
+			node = node.Children[p]
+			if node == nil {
+				return nil, fmt.Errorf("Asset %%s not found", name)
+			}
 		}
 	}
 	if node.Func != nil {
