@@ -113,6 +113,8 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 		}
 	}
 
+	knownFuncs := make(map[string]int)
+
 	for _, file := range list {
 		var asset Asset
 		asset.Path = filepath.Join(dir, file.Name())
@@ -150,7 +152,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 			return fmt.Errorf("Invalid file: %v", asset.Path)
 		}
 
-		asset.Func = safeFunctionName(asset.Name)
+		asset.Func = safeFunctionName(asset.Name, knownFuncs)
 		asset.Path, _ = filepath.Abs(asset.Path)
 		*toc = append(*toc, asset)
 	}
@@ -161,8 +163,10 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 var regFuncName = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 
 // safeFunctionName converts the given name into a name
-// which qualifies as a valid function identifier.
-func safeFunctionName(name string) string {
+// which qualifies as a valid function identifier. It
+// also compares against a known list of functions to
+// prevent conflict based on name translation.
+func safeFunctionName(name string, knownFuncs map[string]int) string {
 	name = strings.ToLower(name)
 	name = regFuncName.ReplaceAllString(name, "_")
 
@@ -179,6 +183,13 @@ func safeFunctionName(name string) string {
 	// Identifier can't start with a digit.
 	if unicode.IsDigit(rune(name[0])) {
 		name = "_" + name
+	}
+
+	if num, ok := knownFuncs[name]; ok {
+		knownFuncs[name] = num + 1
+		name = fmt.Sprintf("%s%d", name, num)
+	} else {
+		knownFuncs[name] = 2
 	}
 
 	return name
