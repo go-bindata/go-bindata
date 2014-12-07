@@ -33,6 +33,7 @@ func writeDebugHeader(w io.Writer) error {
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"os"
 )
 
 // bindata_read reads the given file from disk. It returns an error on failure.
@@ -44,6 +45,11 @@ func bindata_read(path, name string) ([]byte, error) {
 	return buf, err
 }
 
+type asset struct {
+	bytes []byte
+	info  os.FileInfo
+}
+
 `)
 	return err
 }
@@ -53,11 +59,21 @@ func bindata_read(path, name string) ([]byte, error) {
 // the original file (e.g.: from disk).
 func writeDebugAsset(w io.Writer, asset *Asset) error {
 	_, err := fmt.Fprintf(w, `// %s reads file data from disk. It returns an error on failure.
-func %s() ([]byte, error) {
-	return bindata_read(
-		%q,
-		%q,
-	)
+func %s() (*asset, error) {
+	path := %q
+	name := %q
+	bytes, err := bindata_read(path, name)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		err = fmt.Errorf("Error reading asset info %%s at %%s: %%v", name, path, err)
+	}
+
+	a := &asset{bytes: bytes, info: fi}
+	return a, err
 }
 
 `, asset.Func, asset.Func, asset.Path, asset.Name)
