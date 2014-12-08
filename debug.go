@@ -34,6 +34,8 @@ func writeDebugHeader(w io.Writer) error {
 	"io/ioutil"
 	"strings"
 	"os"
+	"path"
+	"path/filepath"
 )
 
 // bindata_read reads the given file from disk. It returns an error on failure.

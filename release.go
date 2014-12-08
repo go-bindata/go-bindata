@@ -108,6 +108,9 @@ func header_compressed_nomemcopy(w io.Writer) error {
 	"unsafe"
 	"os"
 	"time"
+	"io/ioutil"
+	"path"
+	"path/filepath"
 )
 
 func bindata_read(data, name string) ([]byte, error) {
@@ -148,6 +151,9 @@ func header_compressed_memcopy(w io.Writer) error {
 	"strings"
 	"os"
 	"time"
+	"io/ioutil"
+	"path"
+	"path/filepath"
 )
 
 func bindata_read(data []byte, name string) ([]byte, error) {
@@ -179,6 +185,9 @@ func header_uncompressed_nomemcopy(w io.Writer) error {
 	"unsafe"
 	"os"
 	"time"
+	"io/ioutil"
+	"path"
+	"path/filepath"
 )
 
 func bindata_read(data, name string) ([]byte, error) {
@@ -202,6 +211,9 @@ func header_uncompressed_memcopy(w io.Writer) error {
 	"strings"
 	"os"
 	"time"
+	"io/ioutil"
+	"path"
+	"path/filepath"
 )
 `)
 	return err

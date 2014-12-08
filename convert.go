@@ -77,7 +77,12 @@ func Translate(c *Config) error {
 		return err
 	}
 	// Write hierarchical tree of assets
-	return writeTOCTree(bfd, toc)
+	if err := writeTOCTree(bfd, toc); err != nil {
+		return err
+	}
+
+	// Write restore procedure
+	return writeRestore(bfd)
 }
 
 // Implement sort.Interface for []os.FileInfo based on Name()
