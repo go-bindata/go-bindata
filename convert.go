@@ -27,9 +27,10 @@ func Translate(c *Config) error {
 		return err
 	}
 
+	var knownFuncs = make(map[string]int)
 	// Locate all the assets.
 	for _, input := range c.Input {
-		err = findFiles(input.Path, c.Prefix, input.Recursive, &toc, c.Ignore)
+		err = findFiles(input.Path, c.Prefix, input.Recursive, &toc, c.Ignore, knownFuncs)
 		if err != nil {
 			return err
 		}
@@ -95,7 +96,7 @@ func (v ByName) Less(i, j int) bool { return v[i].Name() < v[j].Name() }
 // findFiles recursively finds all the file paths in the given directory tree.
 // They are added to the given map as keys. Values will be safe function names
 // for each file, which will be used when generating the output code.
-func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regexp.Regexp) error {
+func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regexp.Regexp, knownFuncs map[string]int) error {
 	if len(prefix) > 0 {
 		dir, _ = filepath.Abs(dir)
 		prefix, _ = filepath.Abs(prefix)
@@ -129,8 +130,6 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 		sort.Sort(ByName(list))
 	}
 
-	knownFuncs := make(map[string]int)
-
 	for _, file := range list {
 		var asset Asset
 		asset.Path = filepath.Join(dir, file.Name())
@@ -149,7 +148,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 
 		if file.IsDir() {
 			if recursive {
-				findFiles(asset.Path, prefix, recursive, toc, ignore)
+				findFiles(asset.Path, prefix, recursive, toc, ignore, knownFuncs)
 			}
 			continue
 		}
