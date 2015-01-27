@@ -7,11 +7,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/jteeuwen/go-bindata"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/jteeuwen/go-bindata"
 )
 
 func main() {
@@ -40,6 +41,7 @@ func parseArgs() *bindata.Config {
 	}
 
 	flag.BoolVar(&c.Debug, "debug", c.Debug, "Do not embed the assets, but provide the embedding API. Contents will still be loaded from disk.")
+	flag.BoolVar(&c.Dev, "dev", c.Dev, "Similar to debug, but does not emit absolute paths. Expects a rootDir variable to already exist in the generated code's package.")
 	flag.StringVar(&c.Tags, "tags", c.Tags, "Optional set of build tags to include.")
 	flag.StringVar(&c.Prefix, "prefix", c.Prefix, "Optional path prefix to strip off asset names.")
 	flag.StringVar(&c.Package, "pkg", c.Package, "Package name to use in the generated code.")

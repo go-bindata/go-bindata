@@ -117,6 +117,16 @@ type Config struct {
 	// in the code. The default behaviour is Release mode.
 	Debug bool
 
+	// Perform a dev build, which is nearly identical to the debug option. The
+	// only difference is that instead of absolute file paths in generated code,
+	// it expects a variable, `rootDir`, to be set in the generated code's
+	// package (the author needs to do this manually), which it then prepends to
+	// an asset's name to construct the file path on disk.
+	//
+	// This is mainly so you can push the generated code file to a shared
+	// repository.
+	Dev bool
+
 	// Recursively process all assets in the input directory and its
 	// sub directories. This defaults to false, so only files in the
 	// input directory itself are read.

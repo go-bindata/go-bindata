@@ -10,14 +10,14 @@ import (
 )
 
 // writeDebug writes the debug code file.
-func writeDebug(w io.Writer, toc []Asset) error {
+func writeDebug(w io.Writer, c *Config, toc []Asset) error {
 	err := writeDebugHeader(w)
 	if err != nil {
 		return err
 	}
 
 	for i := range toc {
-		err = writeDebugAsset(w, &toc[i])
+		err = writeDebugAsset(w, c, &toc[i])
 		if err != nil {
 			return err
 		}
@@ -59,10 +59,15 @@ type asset struct {
 // writeDebugAsset write a debug entry for the given asset.
 // A debug entry is simply a function which reads the asset from
 // the original file (e.g.: from disk).
-func writeDebugAsset(w io.Writer, asset *Asset) error {
+func writeDebugAsset(w io.Writer, c *Config, asset *Asset) error {
+	pathExpr := fmt.Sprintf("%q", asset.Path)
+	if c.Dev {
+		pathExpr = fmt.Sprintf("filepath.Join(rootDir, %q)", asset.Name)
+	}
+
 	_, err := fmt.Fprintf(w, `// %s reads file data from disk. It returns an error on failure.
 func %s() (*asset, error) {
-	path := %q
+	path := %s
 	name := %q
 	bytes, err := bindata_read(path, name)
 	if err != nil {
@@ -78,6 +83,6 @@ func %s() (*asset, error) {
 	return a, err
 }
 
-`, asset.Func, asset.Func, asset.Path, asset.Name)
+`, asset.Func, asset.Func, pathExpr, asset.Name)
 	return err
 }

@@ -63,8 +63,8 @@ func Translate(c *Config) error {
 	}
 
 	// Write assets.
-	if c.Debug {
-		err = writeDebug(bfd, toc)
+	if c.Debug || c.Dev {
+		err = writeDebug(bfd, c, toc)
 	} else {
 		err = writeRelease(bfd, c, toc)
 	}
