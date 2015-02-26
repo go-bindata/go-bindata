@@ -127,11 +127,6 @@ type Config struct {
 	// repository.
 	Dev bool
 
-	// Recursively process all assets in the input directory and its
-	// sub directories. This defaults to false, so only files in the
-	// input directory itself are read.
-	Recursive bool
-
 	// Ignores any filenames matching the regex pattern specified, e.g.
 	// path/to/file.ext will ignore only that file, or \\.gitignore
 	// will match any .gitignore file.
@@ -147,7 +142,6 @@ func NewConfig() *Config {
 	c.NoMemCopy = false
 	c.NoCompress = false
 	c.Debug = false
-	c.Recursive = false
 	c.Output = "./bindata.go"
 	c.Ignore = make([]*regexp.Regexp, 0)
 	return c
