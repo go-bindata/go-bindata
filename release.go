@@ -81,7 +81,7 @@ func writeReleaseAsset(w io.Writer, c *Config, asset *Asset) error {
 	if err != nil {
 		return err
 	}
-	return asset_release_common(w, asset)
+	return asset_release_common(w, c, asset)
 }
 
 // sanitize prepares a valid UTF-8 string as a raw string constant.
@@ -359,12 +359,21 @@ func %s_bytes() ([]byte, error) {
 	return err
 }
 
-func asset_release_common(w io.Writer, asset *Asset) error {
+func asset_release_common(w io.Writer, c *Config, asset *Asset) error {
 	fi, err := os.Stat(asset.Path)
 	if err != nil {
 		return err
 	}
 
+	mode := uint(fi.Mode())
+	modTime := fi.ModTime().Unix()
+
+	if c.Mode > 0 {
+		mode = uint(os.ModePerm) & c.Mode
+	}
+	if c.ModTime > 0 {
+		modTime = c.ModTime
+	}
 	_, err = fmt.Fprintf(w, `func %s() (*asset, error) {
 	bytes, err := %s_bytes()
 	if err != nil {
@@ -376,6 +385,6 @@ func asset_release_common(w io.Writer, asset *Asset) error {
 	return a, nil
 }
 
-`, asset.Func, asset.Func, asset.Name, fi.Size(), uint32(fi.Mode()), fi.ModTime().Unix())
+`, asset.Func, asset.Func, asset.Name, fi.Size(), mode, modTime)
 	return err
 }
