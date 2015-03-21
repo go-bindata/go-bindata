@@ -7,7 +7,6 @@ package bindata
 import (
 	"fmt"
 	"io"
-	"os"
 	"sort"
 	"strings"
 )
@@ -130,7 +129,7 @@ func AssetDir(name string) ([]string, error) {
 	}
 	tree := newAssetTree()
 	for i := range toc {
-		pathList := strings.Split(toc[i].Name, string(os.PathSeparator))
+		pathList := strings.Split(toc[i].Name, "/")
 		tree.Add(pathList, toc[i])
 	}
 	return tree.WriteAsGoMap(w)
