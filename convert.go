@@ -28,9 +28,10 @@ func Translate(c *Config) error {
 	}
 
 	var knownFuncs = make(map[string]int)
+	var visitedPaths = make(map[string]bool)
 	// Locate all the assets.
 	for _, input := range c.Input {
-		err = findFiles(input.Path, c.Prefix, input.Recursive, &toc, c.Ignore, knownFuncs)
+		err = findFiles(input.Path, c.Prefix, input.Recursive, &toc, c.Ignore, knownFuncs, visitedPaths)
 		if err != nil {
 			return err
 		}
@@ -96,7 +97,7 @@ func (v ByName) Less(i, j int) bool { return v[i].Name() < v[j].Name() }
 // findFiles recursively finds all the file paths in the given directory tree.
 // They are added to the given map as keys. Values will be safe function names
 // for each file, which will be used when generating the output code.
-func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regexp.Regexp, knownFuncs map[string]int) error {
+func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regexp.Regexp, knownFuncs map[string]int, visitedPaths map[string]bool) error {
 	if len(prefix) > 0 {
 		dir, _ = filepath.Abs(dir)
 		prefix, _ = filepath.Abs(prefix)
@@ -114,6 +115,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 		dir = ""
 		list = []os.FileInfo{fi}
 	} else {
+		visitedPaths[dir] = true
 		fd, err := os.Open(dir)
 		if err != nil {
 			return err
@@ -148,7 +150,23 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 
 		if file.IsDir() {
 			if recursive {
-				findFiles(asset.Path, prefix, recursive, toc, ignore, knownFuncs)
+				visitedPaths[asset.Path] = true
+				findFiles(asset.Path, prefix, recursive, toc, ignore, knownFuncs, visitedPaths)
+			}
+			continue
+		} else if file.Mode()&os.ModeSymlink == os.ModeSymlink {
+			var linkPath string
+			if linkPath, err = os.Readlink(asset.Path); err != nil {
+				return err
+			}
+			if !filepath.IsAbs(linkPath) {
+				if linkPath, err = filepath.Abs(dir + "/" + linkPath); err != nil {
+					return err
+				}
+			}
+			if _, ok := visitedPaths[linkPath]; !ok {
+				visitedPaths[linkPath] = true
+				findFiles(asset.Path, prefix, recursive, toc, ignore, knownFuncs, visitedPaths)
 			}
 			continue
 		}
