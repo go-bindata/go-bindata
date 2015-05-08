@@ -1,0 +1,3 @@
+regen:
+	go install ./...
+	make -C testdata regen
