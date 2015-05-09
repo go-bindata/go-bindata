@@ -21,10 +21,13 @@ func bindata_read(data []byte, name string) ([]byte, error) {
 
 	var buf bytes.Buffer
 	_, err = io.Copy(&buf, gz)
-	gz.Close()
+	clErr := gz.Close()
 
 	if err != nil {
 		return nil, fmt.Errorf("Read %q: %v", name, err)
+	}
+	if clErr != nil {
+		return nil, err
 	}
 
 	return buf.Bytes(), nil
@@ -76,7 +79,7 @@ func in_a_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1418006091, 0)}
+	info := bindata_file_info{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -96,7 +99,7 @@ func in_b_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/b/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1418006091, 0)}
+	info := bindata_file_info{name: "in/b/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -116,7 +119,7 @@ func in_c_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/c/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1418006091, 0)}
+	info := bindata_file_info{name: "in/c/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -136,7 +139,7 @@ func in_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1418006091, 0)}
+	info := bindata_file_info{name: "in/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -154,6 +157,17 @@ func Asset(name string) ([]byte, error) {
 		return a.bytes, nil
 	}
 	return nil, fmt.Errorf("Asset %s not found", name)
+}
+
+// MustAsset is like Asset but panics when Asset would return an error.
+// It simplifies safe initialization of global variables.
+func MustAsset(name string) []byte {
+	a, err := Asset(name)
+	if (err != nil) {
+		panic("asset: Asset(" + name + "): " + err.Error())
+	}
+
+	return a
 }
 
 // AssetInfo loads and returns the asset info for the given name.
