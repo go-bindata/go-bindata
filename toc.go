@@ -53,7 +53,7 @@ func (root *assetTree) funcOrNil() string {
 }
 
 func (root *assetTree) writeGoMap(w io.Writer, nident int) {
-	fmt.Fprintf(w, "&_bintree_t{%s, map[string]*_bintree_t{\n", root.funcOrNil())
+	fmt.Fprintf(w, "&bintree{%s, map[string]*bintree{\n", root.funcOrNil())
 
 	// Sort to make output stable between invocations
 	filenames := make([]string, len(root.Children))
@@ -78,9 +78,9 @@ func (root *assetTree) writeGoMap(w io.Writer, nident int) {
 }
 
 func (root *assetTree) WriteAsGoMap(w io.Writer) error {
-	_, err := fmt.Fprint(w, `type _bintree_t struct {
+	_, err := fmt.Fprint(w, `type bintree struct {
 	Func func() (*asset, error)
-	Children map[string]*_bintree_t
+	Children map[string]*bintree
 }
 var _bintree = `)
 	root.writeGoMap(w, 0)

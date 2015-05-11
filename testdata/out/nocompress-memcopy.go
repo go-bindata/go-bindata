@@ -205,25 +205,25 @@ func AssetDir(name string) ([]string, error) {
 	return rv, nil
 }
 
-type _bintree_t struct {
+type bintree struct {
 	Func func() (*asset, error)
-	Children map[string]*_bintree_t
+	Children map[string]*bintree
 }
-var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
-	"in": &_bintree_t{nil, map[string]*_bintree_t{
-		"a": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_a_test_asset, map[string]*_bintree_t{
+var _bintree = &bintree{nil, map[string]*bintree{
+	"in": &bintree{nil, map[string]*bintree{
+		"a": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{in_a_test_asset, map[string]*bintree{
 			}},
 		}},
-		"b": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_b_test_asset, map[string]*_bintree_t{
+		"b": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{in_b_test_asset, map[string]*bintree{
 			}},
 		}},
-		"c": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_c_test_asset, map[string]*_bintree_t{
+		"c": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{in_c_test_asset, map[string]*bintree{
 			}},
 		}},
-		"test.asset": &_bintree_t{in_test_asset, map[string]*_bintree_t{
+		"test.asset": &bintree{in_test_asset, map[string]*bintree{
 		}},
 	}},
 }}
