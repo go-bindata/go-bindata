@@ -113,7 +113,7 @@ func header_compressed_nomemcopy(w io.Writer) error {
 	"path/filepath"
 )
 
-func bindata_read(data, name string) ([]byte, error) {
+func bindataRead(data, name string) ([]byte, error) {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
 	b := empty[:]
@@ -159,7 +159,7 @@ func header_compressed_memcopy(w io.Writer) error {
 	"path/filepath"
 )
 
-func bindata_read(data []byte, name string) ([]byte, error) {
+func bindataRead(data []byte, name string) ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
 		return nil, fmt.Errorf("Read %%q: %%v", name, err)
@@ -196,7 +196,7 @@ func header_uncompressed_nomemcopy(w io.Writer) error {
 	"path/filepath"
 )
 
-func bindata_read(data, name string) ([]byte, error) {
+func bindataRead(data, name string) ([]byte, error) {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
 	b := empty[:]
@@ -278,7 +278,7 @@ func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	_, err = fmt.Fprintf(w, `"
 
 func %s_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_%s,
 		%q,
 	)
@@ -305,7 +305,7 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	_, err = fmt.Fprintf(w, `")
 
 func %s_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_%s,
 		%q,
 	)
@@ -329,7 +329,7 @@ func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	_, err = fmt.Fprintf(w, `"
 
 func %s_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_%s,
 		%q,
 	)

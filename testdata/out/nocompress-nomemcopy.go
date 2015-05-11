@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 )
 
-func bindata_read(data, name string) ([]byte, error) {
+func bindataRead(data, name string) ([]byte, error) {
 	var empty [0]byte
 	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
 	b := empty[:]
@@ -57,7 +57,7 @@ func (fi bindata_file_info) Sys() interface{} {
 var _in_a_test_asset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
 func in_a_test_asset_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_in_a_test_asset,
 		"in/a/test.asset",
 	)
@@ -77,7 +77,7 @@ func in_a_test_asset() (*asset, error) {
 var _in_b_test_asset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
 func in_b_test_asset_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_in_b_test_asset,
 		"in/b/test.asset",
 	)
@@ -97,7 +97,7 @@ func in_b_test_asset() (*asset, error) {
 var _in_c_test_asset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
 func in_c_test_asset_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_in_c_test_asset,
 		"in/c/test.asset",
 	)
@@ -117,7 +117,7 @@ func in_c_test_asset() (*asset, error) {
 var _in_test_asset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
 func in_test_asset_bytes() ([]byte, error) {
-	return bindata_read(
+	return bindataRead(
 		_in_test_asset,
 		"in/test.asset",
 	)
