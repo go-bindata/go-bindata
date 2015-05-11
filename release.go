@@ -231,29 +231,29 @@ func header_release_common(w io.Writer) error {
 	info  os.FileInfo
 }
 
-type bindata_file_info struct {
+type bindataFileInfo struct {
 	name string
 	size int64
 	mode os.FileMode
 	modTime time.Time
 }
 
-func (fi bindata_file_info) Name() string {
+func (fi bindataFileInfo) Name() string {
 	return fi.name
 }
-func (fi bindata_file_info) Size() int64 {
+func (fi bindataFileInfo) Size() int64 {
 	return fi.size
 }
-func (fi bindata_file_info) Mode() os.FileMode {
+func (fi bindataFileInfo) Mode() os.FileMode {
 	return fi.mode
 }
-func (fi bindata_file_info) ModTime() time.Time {
+func (fi bindataFileInfo) ModTime() time.Time {
 	return fi.modTime
 }
-func (fi bindata_file_info) IsDir() bool {
+func (fi bindataFileInfo) IsDir() bool {
 	return false
 }
-func (fi bindata_file_info) Sys() interface{} {
+func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
@@ -386,7 +386,7 @@ func asset_release_common(w io.Writer, c *Config, asset *Asset) error {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: %q, size: %d, mode: os.FileMode(%d), modTime: time.Unix(%d, 0)}
+	info := bindataFileInfo{name: %q, size: %d, mode: os.FileMode(%d), modTime: time.Unix(%d, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }

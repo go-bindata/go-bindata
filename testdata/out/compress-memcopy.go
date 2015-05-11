@@ -38,29 +38,29 @@ type asset struct {
 	info  os.FileInfo
 }
 
-type bindata_file_info struct {
+type bindataFileInfo struct {
 	name string
 	size int64
 	mode os.FileMode
 	modTime time.Time
 }
 
-func (fi bindata_file_info) Name() string {
+func (fi bindataFileInfo) Name() string {
 	return fi.name
 }
-func (fi bindata_file_info) Size() int64 {
+func (fi bindataFileInfo) Size() int64 {
 	return fi.size
 }
-func (fi bindata_file_info) Mode() os.FileMode {
+func (fi bindataFileInfo) Mode() os.FileMode {
 	return fi.mode
 }
-func (fi bindata_file_info) ModTime() time.Time {
+func (fi bindataFileInfo) ModTime() time.Time {
 	return fi.modTime
 }
-func (fi bindata_file_info) IsDir() bool {
+func (fi bindataFileInfo) IsDir() bool {
 	return false
 }
-func (fi bindata_file_info) Sys() interface{} {
+func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
@@ -79,7 +79,7 @@ func in_a_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
+	info := bindataFileInfo{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -99,7 +99,7 @@ func in_b_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/b/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
+	info := bindataFileInfo{name: "in/b/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -119,7 +119,7 @@ func in_c_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/c/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
+	info := bindataFileInfo{name: "in/c/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
@@ -139,7 +139,7 @@ func in_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindata_file_info{name: "in/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
+	info := bindataFileInfo{name: "in/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
