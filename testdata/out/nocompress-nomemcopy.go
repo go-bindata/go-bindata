@@ -250,7 +250,7 @@ var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
 	}},
 }}
 
-// Restore an asset under the given directory
+// RestoreAsset restores an asset under the given directory
 func RestoreAsset(dir, name string) error {
         data, err := Asset(name)
         if err != nil {
@@ -275,7 +275,7 @@ func RestoreAsset(dir, name string) error {
         return nil
 }
 
-// Restore assets under the given directory recursively
+// RestoreAssets restores an asset under the given directory recursively
 func RestoreAssets(dir, name string) error {
         children, err := AssetDir(name)
         if err != nil { // File
