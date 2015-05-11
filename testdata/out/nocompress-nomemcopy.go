@@ -278,14 +278,15 @@ func RestoreAsset(dir, name string) error {
 // RestoreAssets restores an asset under the given directory recursively
 func RestoreAssets(dir, name string) error {
         children, err := AssetDir(name)
-        if err != nil { // File
+        // File
+        if err != nil {
                 return RestoreAsset(dir, name)
-        } else { // Dir
-                for _, child := range children {
-                        err = RestoreAssets(dir, path.Join(name, child))
-                        if err != nil {
-                                return err
-                        }
+        }
+        // Dir
+        for _, child := range children {
+                err = RestoreAssets(dir, path.Join(name, child))
+                if err != nil {
+                        return err
                 }
         }
         return nil
