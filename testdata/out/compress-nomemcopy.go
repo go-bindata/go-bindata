@@ -89,7 +89,7 @@ func in_a_test_asset() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1430781941, 0)}
+	info := bindataFileInfo{name: "in/a/test.asset", size: 15, mode: os.FileMode(420), modTime: time.Unix(1431385279, 0)}
 	a := &asset{bytes: bytes, info:  info}
 	return a, nil
 }
