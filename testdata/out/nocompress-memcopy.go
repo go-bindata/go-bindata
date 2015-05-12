@@ -40,15 +40,15 @@ func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
-var _in_a_test_asset = []byte(`// sample file
+var _inATestAsset = []byte(`// sample file
 `)
 
-func in_a_test_asset_bytes() ([]byte, error) {
-	return _in_a_test_asset, nil
+func inATestAssetBytes() ([]byte, error) {
+	return _inATestAsset, nil
 }
 
-func in_a_test_asset() (*asset, error) {
-	bytes, err := in_a_test_asset_bytes()
+func inATestAsset() (*asset, error) {
+	bytes, err := inATestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -58,15 +58,15 @@ func in_a_test_asset() (*asset, error) {
 	return a, nil
 }
 
-var _in_b_test_asset = []byte(`// sample file
+var _inBTestAsset = []byte(`// sample file
 `)
 
-func in_b_test_asset_bytes() ([]byte, error) {
-	return _in_b_test_asset, nil
+func inBTestAssetBytes() ([]byte, error) {
+	return _inBTestAsset, nil
 }
 
-func in_b_test_asset() (*asset, error) {
-	bytes, err := in_b_test_asset_bytes()
+func inBTestAsset() (*asset, error) {
+	bytes, err := inBTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -76,15 +76,15 @@ func in_b_test_asset() (*asset, error) {
 	return a, nil
 }
 
-var _in_c_test_asset = []byte(`// sample file
+var _inCTestAsset = []byte(`// sample file
 `)
 
-func in_c_test_asset_bytes() ([]byte, error) {
-	return _in_c_test_asset, nil
+func inCTestAssetBytes() ([]byte, error) {
+	return _inCTestAsset, nil
 }
 
-func in_c_test_asset() (*asset, error) {
-	bytes, err := in_c_test_asset_bytes()
+func inCTestAsset() (*asset, error) {
+	bytes, err := inCTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -94,15 +94,15 @@ func in_c_test_asset() (*asset, error) {
 	return a, nil
 }
 
-var _in_test_asset = []byte(`// sample file
+var _inTestAsset = []byte(`// sample file
 `)
 
-func in_test_asset_bytes() ([]byte, error) {
-	return _in_test_asset, nil
+func inTestAssetBytes() ([]byte, error) {
+	return _inTestAsset, nil
 }
 
-func in_test_asset() (*asset, error) {
-	bytes, err := in_test_asset_bytes()
+func inTestAsset() (*asset, error) {
+	bytes, err := inTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -164,10 +164,10 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"in/a/test.asset": in_a_test_asset,
-	"in/b/test.asset": in_b_test_asset,
-	"in/c/test.asset": in_c_test_asset,
-	"in/test.asset": in_test_asset,
+	"in/a/test.asset": inATestAsset,
+	"in/b/test.asset": inBTestAsset,
+	"in/c/test.asset": inCTestAsset,
+	"in/test.asset": inTestAsset,
 }
 
 // AssetDir returns the file names below a certain
@@ -212,18 +212,18 @@ type bintree struct {
 var _bintree = &bintree{nil, map[string]*bintree{
 	"in": &bintree{nil, map[string]*bintree{
 		"a": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_a_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inATestAsset, map[string]*bintree{
 			}},
 		}},
 		"b": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_b_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inBTestAsset, map[string]*bintree{
 			}},
 		}},
 		"c": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_c_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inCTestAsset, map[string]*bintree{
 			}},
 		}},
-		"test.asset": &bintree{in_test_asset, map[string]*bintree{
+		"test.asset": &bintree{inTestAsset, map[string]*bintree{
 		}},
 	}},
 }}

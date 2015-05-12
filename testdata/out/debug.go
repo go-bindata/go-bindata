@@ -23,8 +23,8 @@ type asset struct {
 	info  os.FileInfo
 }
 
-// in_a_test_asset reads file data from disk. It returns an error on failure.
-func in_a_test_asset() (*asset, error) {
+// inATestAsset reads file data from disk. It returns an error on failure.
+func inATestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/a/test.asset"
 	name := "in/a/test.asset"
 	bytes, err := bindataRead(path, name)
@@ -41,8 +41,8 @@ func in_a_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_b_test_asset reads file data from disk. It returns an error on failure.
-func in_b_test_asset() (*asset, error) {
+// inBTestAsset reads file data from disk. It returns an error on failure.
+func inBTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/b/test.asset"
 	name := "in/b/test.asset"
 	bytes, err := bindataRead(path, name)
@@ -59,8 +59,8 @@ func in_b_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_c_test_asset reads file data from disk. It returns an error on failure.
-func in_c_test_asset() (*asset, error) {
+// inCTestAsset reads file data from disk. It returns an error on failure.
+func inCTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/c/test.asset"
 	name := "in/c/test.asset"
 	bytes, err := bindataRead(path, name)
@@ -77,8 +77,8 @@ func in_c_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_test_asset reads file data from disk. It returns an error on failure.
-func in_test_asset() (*asset, error) {
+// inTestAsset reads file data from disk. It returns an error on failure.
+func inTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/test.asset"
 	name := "in/test.asset"
 	bytes, err := bindataRead(path, name)
@@ -147,10 +147,10 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"in/a/test.asset": in_a_test_asset,
-	"in/b/test.asset": in_b_test_asset,
-	"in/c/test.asset": in_c_test_asset,
-	"in/test.asset": in_test_asset,
+	"in/a/test.asset": inATestAsset,
+	"in/b/test.asset": inBTestAsset,
+	"in/c/test.asset": inCTestAsset,
+	"in/test.asset": inTestAsset,
 }
 
 // AssetDir returns the file names below a certain
@@ -195,18 +195,18 @@ type bintree struct {
 var _bintree = &bintree{nil, map[string]*bintree{
 	"in": &bintree{nil, map[string]*bintree{
 		"a": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_a_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inATestAsset, map[string]*bintree{
 			}},
 		}},
 		"b": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_b_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inBTestAsset, map[string]*bintree{
 			}},
 		}},
 		"c": &bintree{nil, map[string]*bintree{
-			"test.asset": &bintree{in_c_test_asset, map[string]*bintree{
+			"test.asset": &bintree{inCTestAsset, map[string]*bintree{
 			}},
 		}},
-		"test.asset": &bintree{in_test_asset, map[string]*bintree{
+		"test.asset": &bintree{inTestAsset, map[string]*bintree{
 		}},
 	}},
 }}

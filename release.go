@@ -277,7 +277,7 @@ func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `"
 
-func %s_bytes() ([]byte, error) {
+func %sBytes() ([]byte, error) {
 	return bindataRead(
 		_%s,
 		%q,
@@ -304,7 +304,7 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `")
 
-func %s_bytes() ([]byte, error) {
+func %sBytes() ([]byte, error) {
 	return bindataRead(
 		_%s,
 		%q,
@@ -328,7 +328,7 @@ func uncompressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `"
 
-func %s_bytes() ([]byte, error) {
+func %sBytes() ([]byte, error) {
 	return bindataRead(
 		_%s,
 		%q,
@@ -357,7 +357,7 @@ func uncompressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 
 	_, err = fmt.Fprintf(w, `)
 
-func %s_bytes() ([]byte, error) {
+func %sBytes() ([]byte, error) {
 	return _%s, nil
 }
 
@@ -381,7 +381,7 @@ func asset_release_common(w io.Writer, c *Config, asset *Asset) error {
 		modTime = c.ModTime
 	}
 	_, err = fmt.Fprintf(w, `func %s() (*asset, error) {
-	bytes, err := %s_bytes()
+	bytes, err := %sBytes()
 	if err != nil {
 		return nil, err
 	}
