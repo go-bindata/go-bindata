@@ -200,18 +200,22 @@ var regFuncName = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 // also compares against a known list of functions to
 // prevent conflict based on name translation.
 func safeFunctionName(name string, knownFuncs map[string]int) string {
+	var inBytes, outBytes []byte
+
 	name = strings.ToLower(name)
-	name = regFuncName.ReplaceAllString(name, "_")
+	inBytes = []byte(name)
 
-	// Get rid of "__" instances for niceness.
-	for strings.Index(name, "__") > -1 {
-		name = strings.Replace(name, "__", "_", -1)
+	for i := 0; i < len(inBytes); i++ {
+		if regFuncName.Match([]byte{inBytes[i]}) {
+			i++
+			outBytes = append(outBytes, []byte(strings.ToUpper(string(inBytes[i])))...)
+			// bytes[i] = strings.ToUpper(string(byte))
+		} else {
+			outBytes = append(outBytes, inBytes[i])
+		}
 	}
 
-	// Leading underscores are silly (unless they prefix a digit (see below)).
-	for len(name) > 1 && name[0] == '_' {
-		name = name[1:]
-	}
+	name = string(outBytes)
 
 	// Identifier can't start with a digit.
 	if unicode.IsDigit(rune(name[0])) {

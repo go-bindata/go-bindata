@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 )
 
-// bindata_read reads the given file from disk. It returns an error on failure.
-func bindata_read(path, name string) ([]byte, error) {
+// bindataRead reads the given file from disk. It returns an error on failure.
+func bindataRead(path, name string) ([]byte, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
 		err = fmt.Errorf("Error reading asset %s at %s: %v", name, path, err)
@@ -23,11 +23,11 @@ type asset struct {
 	info  os.FileInfo
 }
 
-// in_a_test_asset reads file data from disk. It returns an error on failure.
-func in_a_test_asset() (*asset, error) {
+// inATestAsset reads file data from disk. It returns an error on failure.
+func inATestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/a/test.asset"
 	name := "in/a/test.asset"
-	bytes, err := bindata_read(path, name)
+	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +41,11 @@ func in_a_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_b_test_asset reads file data from disk. It returns an error on failure.
-func in_b_test_asset() (*asset, error) {
+// inBTestAsset reads file data from disk. It returns an error on failure.
+func inBTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/b/test.asset"
 	name := "in/b/test.asset"
-	bytes, err := bindata_read(path, name)
+	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
 	}
@@ -59,11 +59,11 @@ func in_b_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_c_test_asset reads file data from disk. It returns an error on failure.
-func in_c_test_asset() (*asset, error) {
+// inCTestAsset reads file data from disk. It returns an error on failure.
+func inCTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/c/test.asset"
 	name := "in/c/test.asset"
-	bytes, err := bindata_read(path, name)
+	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
 	}
@@ -77,11 +77,11 @@ func in_c_test_asset() (*asset, error) {
 	return a, err
 }
 
-// in_test_asset reads file data from disk. It returns an error on failure.
-func in_test_asset() (*asset, error) {
+// inTestAsset reads file data from disk. It returns an error on failure.
+func inTestAsset() (*asset, error) {
 	path := "/Users/tamird/src/go/src/github.com/jteeuwen/go-bindata/testdata/in/test.asset"
 	name := "in/test.asset"
-	bytes, err := bindata_read(path, name)
+	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
 	}
@@ -147,10 +147,10 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"in/a/test.asset": in_a_test_asset,
-	"in/b/test.asset": in_b_test_asset,
-	"in/c/test.asset": in_c_test_asset,
-	"in/test.asset": in_test_asset,
+	"in/a/test.asset": inATestAsset,
+	"in/b/test.asset": inBTestAsset,
+	"in/c/test.asset": inCTestAsset,
+	"in/test.asset": inTestAsset,
 }
 
 // AssetDir returns the file names below a certain
@@ -188,30 +188,30 @@ func AssetDir(name string) ([]string, error) {
 	return rv, nil
 }
 
-type _bintree_t struct {
+type bintree struct {
 	Func func() (*asset, error)
-	Children map[string]*_bintree_t
+	Children map[string]*bintree
 }
-var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
-	"in": &_bintree_t{nil, map[string]*_bintree_t{
-		"a": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_a_test_asset, map[string]*_bintree_t{
+var _bintree = &bintree{nil, map[string]*bintree{
+	"in": &bintree{nil, map[string]*bintree{
+		"a": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{inATestAsset, map[string]*bintree{
 			}},
 		}},
-		"b": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_b_test_asset, map[string]*_bintree_t{
+		"b": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{inBTestAsset, map[string]*bintree{
 			}},
 		}},
-		"c": &_bintree_t{nil, map[string]*_bintree_t{
-			"test.asset": &_bintree_t{in_c_test_asset, map[string]*_bintree_t{
+		"c": &bintree{nil, map[string]*bintree{
+			"test.asset": &bintree{inCTestAsset, map[string]*bintree{
 			}},
 		}},
-		"test.asset": &_bintree_t{in_test_asset, map[string]*_bintree_t{
+		"test.asset": &bintree{inTestAsset, map[string]*bintree{
 		}},
 	}},
 }}
 
-// Restore an asset under the given directory
+// RestoreAsset restores an asset under the given directory
 func RestoreAsset(dir, name string) error {
         data, err := Asset(name)
         if err != nil {
@@ -236,17 +236,18 @@ func RestoreAsset(dir, name string) error {
         return nil
 }
 
-// Restore assets under the given directory recursively
+// RestoreAssets restores an asset under the given directory recursively
 func RestoreAssets(dir, name string) error {
         children, err := AssetDir(name)
-        if err != nil { // File
+        // File
+        if err != nil {
                 return RestoreAsset(dir, name)
-        } else { // Dir
-                for _, child := range children {
-                        err = RestoreAssets(dir, path.Join(name, child))
-                        if err != nil {
-                                return err
-                        }
+        }
+        // Dir
+        for _, child := range children {
+                err = RestoreAssets(dir, path.Join(name, child))
+                if err != nil {
+                        return err
                 }
         }
         return nil
