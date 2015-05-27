@@ -51,8 +51,7 @@ func Translate(c *Config) error {
 
 	// Write build tags, if applicable.
 	if len(c.Tags) > 0 {
-		_, err = fmt.Fprintf(bfd, "// +build %s\n\n", c.Tags)
-		if err != nil {
+		if _, err = fmt.Fprintf(bfd, "// +build %s\n\n", c.Tags); err != nil {
 			return err
 		}
 	}
