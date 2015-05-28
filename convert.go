@@ -68,7 +68,7 @@ func Translate(c *Config) error {
 			return err
 		}
 	}
-	if _, err = fmt.Fprint(bfd, "// DO NOT EDIT!\n"); err != nil {
+	if _, err = fmt.Fprint(bfd, "// DO NOT EDIT!\n\n"); err != nil {
 		return err
 	}
 
