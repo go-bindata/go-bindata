@@ -5,6 +5,7 @@
 // in/c/test.asset
 // in/test.asset
 // DO NOT EDIT!
+
 package main
 
 import (
