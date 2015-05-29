@@ -229,7 +229,9 @@ func safeFunctionName(name string, knownFuncs map[string]int) string {
 
 	for i := 0; i < len(inBytes); i++ {
 		if regFuncName.Match([]byte{inBytes[i]}) {
-			i++
+			for j := i; j < len(inBytes) && regFuncName.Match([]byte{inBytes[j]}); j++ {
+				i++
+			}
 			outBytes = append(outBytes, []byte(strings.ToUpper(string(inBytes[i])))...)
 			// bytes[i] = strings.ToUpper(string(byte))
 		} else {
