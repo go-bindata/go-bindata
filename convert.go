@@ -134,7 +134,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 	var list []os.FileInfo
 
 	if !fi.IsDir() {
-		dir = ""
+		dir = filepath.Dir(dir)
 		list = []os.FileInfo{fi}
 	} else {
 		visitedPaths[dir] = true
