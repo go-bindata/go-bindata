@@ -223,17 +223,17 @@ var regFuncName = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 // prevent conflict based on name translation.
 func safeFunctionName(name string, knownFuncs map[string]int) string {
 	var inBytes, outBytes []byte
+	var toUpper bool
 
 	name = strings.ToLower(name)
 	inBytes = []byte(name)
 
 	for i := 0; i < len(inBytes); i++ {
 		if regFuncName.Match([]byte{inBytes[i]}) {
-			for j := i; j < len(inBytes) && regFuncName.Match([]byte{inBytes[j]}); j++ {
-				i++
-			}
+			toUpper = true
+		} else if toUpper {
 			outBytes = append(outBytes, []byte(strings.ToUpper(string(inBytes[i])))...)
-			// bytes[i] = strings.ToUpper(string(byte))
+			toUpper = false
 		} else {
 			outBytes = append(outBytes, inBytes[i])
 		}
