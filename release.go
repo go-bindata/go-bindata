@@ -103,9 +103,7 @@ func header_compressed_nomemcopy(w io.Writer) error {
 	"compress/gzip"
 	"fmt"
 	"io"
-	"reflect"
 	"strings"
-	"unsafe"
 	"os"
 	"time"
 	"io/ioutil"
@@ -114,15 +112,7 @@ func header_compressed_nomemcopy(w io.Writer) error {
 )
 
 func bindataRead(data, name string) ([]byte, error) {
-	var empty [0]byte
-	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
-	b := empty[:]
-	bx := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-	bx.Data = sx.Data
-	bx.Len = len(data)
-	bx.Cap = bx.Len
-
-	gz, err := gzip.NewReader(bytes.NewBuffer(b))
+	gz, err := gzip.NewReader(strings.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("Read %%q: %%v", name, err)
 	}
