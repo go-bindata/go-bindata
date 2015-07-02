@@ -34,7 +34,6 @@ func writeDebugHeader(w io.Writer) error {
 	"io/ioutil"
 	"strings"
 	"os"
-	"path"
 	"path/filepath"
 )
 

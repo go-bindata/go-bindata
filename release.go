@@ -107,7 +107,6 @@ func header_compressed_nomemcopy(w io.Writer) error {
 	"os"
 	"time"
 	"io/ioutil"
-	"path"
 	"path/filepath"
 )
 
@@ -145,7 +144,6 @@ func header_compressed_memcopy(w io.Writer) error {
 	"os"
 	"time"
 	"io/ioutil"
-	"path"
 	"path/filepath"
 )
 
@@ -182,7 +180,6 @@ func header_uncompressed_nomemcopy(w io.Writer) error {
 	"os"
 	"time"
 	"io/ioutil"
-	"path"
 	"path/filepath"
 )
 
@@ -208,7 +205,6 @@ func header_uncompressed_memcopy(w io.Writer) error {
 	"os"
 	"time"
 	"io/ioutil"
-	"path"
 	"path/filepath"
 )
 `)
