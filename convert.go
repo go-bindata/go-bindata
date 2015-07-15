@@ -120,13 +120,14 @@ func (v ByName) Less(i, j int) bool { return v[i].Name() < v[j].Name() }
 // They are added to the given map as keys. Values will be safe function names
 // for each file, which will be used when generating the output code.
 func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regexp.Regexp, knownFuncs map[string]int, visitedPaths map[string]bool) error {
+	dirpath := dir
 	if len(prefix) > 0 {
-		dir, _ = filepath.Abs(dir)
+		dirpath, _ = filepath.Abs(dirpath)
 		prefix, _ = filepath.Abs(prefix)
 		prefix = filepath.ToSlash(prefix)
 	}
 
-	fi, err := os.Stat(dir)
+	fi, err := os.Stat(dirpath)
 	if err != nil {
 		return err
 	}
@@ -134,11 +135,11 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 	var list []os.FileInfo
 
 	if !fi.IsDir() {
-		dir = filepath.Dir(dir)
+		dirpath = filepath.Dir(dirpath)
 		list = []os.FileInfo{fi}
 	} else {
-		visitedPaths[dir] = true
-		fd, err := os.Open(dir)
+		visitedPaths[dirpath] = true
+		fd, err := os.Open(dirpath)
 		if err != nil {
 			return err
 		}
@@ -156,7 +157,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 
 	for _, file := range list {
 		var asset Asset
-		asset.Path = filepath.Join(dir, file.Name())
+		asset.Path = filepath.Join(dirpath, file.Name())
 		asset.Name = filepath.ToSlash(asset.Path)
 
 		ignoring := false
@@ -182,7 +183,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 				return err
 			}
 			if !filepath.IsAbs(linkPath) {
-				if linkPath, err = filepath.Abs(dir + "/" + linkPath); err != nil {
+				if linkPath, err = filepath.Abs(dirpath + "/" + linkPath); err != nil {
 					return err
 				}
 			}
@@ -195,6 +196,8 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 
 		if strings.HasPrefix(asset.Name, prefix) {
 			asset.Name = asset.Name[len(prefix):]
+		} else {
+			asset.Name = filepath.Join(dir, file.Name())
 		}
 
 		// If we have a leading slash, get rid of it.
