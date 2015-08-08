@@ -1,8 +1,13 @@
+FILES:=$(wildcard out/*.go)
+
 .PHONY: check
-check: out/compress-memcopy.go out/compress-nomemcopy.go out/debug.go out/nocompress-memcopy.go out/nocompress-nomemcopy.go errcheck go-nyet golint
-	$(foreach file, $(wildcard out/*.go), errcheck $(file);)
-	$(foreach file, $(wildcard out/*.go), go-nyet $(file);)
-	$(foreach file, $(wildcard out/*.go), golint $(file);)
+check: errcheck vet golint $(FILES:.go=.checked)
+
+out/%.checked: out/%.go
+	errcheck $<
+	go tool vet --all $<
+	go tool vet --shadow $<
+	golint $<
 
 $(GOPATH)/bin/go-bindata: $(wildcard ../*.go) $(wildcard ../**/*.go)
 	go install ../...
@@ -25,8 +30,8 @@ out/nocompress-nomemcopy.go: $(wildcard in/**/*) $(GOPATH)/bin/go-bindata
 errcheck:
 	go get github.com/kisielk/errcheck
 
-go-nyet:
-	go get github.com/barakmich/go-nyet
+vet:
+	go get golang.org/x/tools/cmd/vet
 
 golint:
 	go get github.com/golang/lint/golint
