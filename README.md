@@ -15,7 +15,7 @@ output being generated.
 
 To install the library and command line program, use the following:
 
-	go get -u github.com/go-bindata/bindata/...
+	go get -u github.com/go-bindata/go-bindata/...
 
 
 ### Usage
