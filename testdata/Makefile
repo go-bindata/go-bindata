@@ -1,7 +1,7 @@
 FILES:=$(wildcard out/*.go)
 
 .PHONY: check
-check: errcheck vet golint $(FILES:.go=.checked)
+check: errcheck golint $(FILES:.go=.checked)
 
 out/%.checked: out/%.go
 	errcheck $<
