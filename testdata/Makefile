@@ -30,8 +30,5 @@ out/nocompress-nomemcopy.go: $(wildcard in/**/*) $(GOPATH)/bin/go-bindata
 errcheck:
 	go get github.com/kisielk/errcheck
 
-vet:
-	go get golang.org/x/tools/cmd/vet
-
 golint:
 	go get github.com/golang/lint/golint
