@@ -208,7 +208,7 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 
 		// This shouldn't happen.
 		if len(asset.Name) == 0 {
-			return fmt.Errorf("Invalid file: %v", asset.Path)
+			return fmt.Errorf("invalid file: %v", asset.Path)
 		}
 
 		asset.Func = safeFunctionName(asset.Name, knownFuncs)
