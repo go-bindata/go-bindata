@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-bindata/bindata)](https://goreportcard.com/report/github.com/go-bindata/bindata)
 
-This package converts any file into managable Go source code. Useful for
+This package converts any file into manageable Go source code. Useful for
 embedding binary data into a go program. The file data is optionally gzip
 compressed before being converted to a raw byte slice.
 
@@ -29,7 +29,7 @@ working directory. It includes all assets from the `data` directory.
 
 	$ go-bindata data/
 
-To include all input sub-directories recursively, use the elipsis postfix
+To include all input sub-directories recursively, use the ellipsis postfix
 as defined for Go import paths. Otherwise it will only consider assets in the
 input directory itself.
 
@@ -78,7 +78,7 @@ This is useful during development when you expect the assets to change often.
 The host application using these assets uses the same API in both cases and
 will not have to care where the actual data comes from.
 
-An example is a Go webserver with some embedded, static web content like
+An example is a Go web server with some embedded, static web content like
 HTML, JS and CSS files. While developing it, you do not want to rebuild the
 whole server and restart it every time you make a change to a bit of
 javascript. You just want to build and launch the server once. Then just press
@@ -104,7 +104,7 @@ For most use-cases this is not a problem, but if you ever try to alter the
 returned byte slice, a runtime panic is thrown. Use this mode only on target
 platforms where memory constraints are an issue.
 
-The default behaviour is to use the old code generation method. This
+The default behavior is to use the old code generation method. This
 prevents the two previously mentioned issues, but will employ at least one
 extra memcopy and thus increase memory requirements.
 
@@ -149,14 +149,14 @@ This feature is useful if you do not care for compression, or the supplied
 resource is already compressed. Doing it again would not add any value and may
 even increase the size of the data.
 
-The default behaviour of the program is to use compression.
+The default behavior of the program is to use compression.
 
 
 ### Path prefix stripping
 
 The keys used in the `_bindata` map, are the same as the input file name
 passed to `go-bindata`. This includes the path. In most cases, this is not
-desireable, as it puts potentially sensitive information in your code base.
+desirable, as it puts potentially sensitive information in your code base.
 For this purpose, the tool supplies another command line flag `-prefix`.
 This accepts a portion of a path name, which should be stripped off from
 the map keys and function names.
@@ -186,6 +186,5 @@ and must follow the build tags syntax specified by the go tool.
 
 ### Related projects
 
-[go-bindata-assetfs](https://github.com/elazarl/go-bindata-assetfs#readme) - 
+[go-bindata-assetfs](https://github.com/elazarl/go-bindata-assetfs#readme) -
 implements `http.FileSystem` interface. Allows you to serve assets with `net/http`.
-
