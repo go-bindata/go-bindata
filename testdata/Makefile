@@ -5,8 +5,7 @@ check: errcheck golint $(FILES:.go=.checked)
 
 out/%.checked: out/%.go
 	errcheck $<
-	go tool vet --all $<
-	go tool vet --shadow $<
+	go vet --all $<
 	golint $<
 
 $(GOPATH)/bin/go-bindata: $(wildcard ../*.go) $(wildcard ../**/*.go)
@@ -31,4 +30,4 @@ errcheck:
 	go get github.com/kisielk/errcheck
 
 golint:
-	go get github.com/golang/lint/golint
+	go get golang.org/x/lint/golint
