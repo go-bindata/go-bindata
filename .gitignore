@@ -14,3 +14,7 @@
 # Goland project files
 .idea/
 *.iml
+
+# Our files
+testdata/out
+go-bindata
