@@ -314,7 +314,7 @@ func (fi bindataFileInfo) Mode() os.FileMode {
 	return fi.mode
 }
 
-// Mode return file modify time
+// ModTime return file modify time
 func (fi bindataFileInfo) ModTime() time.Time {
 	return fi.modTime
 }
