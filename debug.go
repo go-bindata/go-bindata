@@ -52,7 +52,8 @@ func writeDebugHeader(w io.Writer, c *Config) error {
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"`
+	"strings"
+	"time"`
 	}
 
 	_, err := fmt.Fprintf(w, `%s
