@@ -135,8 +135,8 @@ type Config struct {
 	NoMetadata bool
 	// When nonzero, use this as mode for all files.
 	Mode uint
-	// When nonzero, use this as unix timestamp for all files.
-	ModTime int64
+	// When not nil, use this as unix timestamp for all files.
+	ModTime *int64
 
 	// Ignores any filenames matching the regex pattern specified, e.g.
 	// path/to/file.ext will ignore only that file, or \\.gitignore

@@ -454,8 +454,8 @@ func asset_release_common(w io.Writer, c *Config, asset *Asset) error {
 	if c.Mode > 0 {
 		mode = uint(os.ModePerm) & c.Mode
 	}
-	if c.ModTime > 0 {
-		modTime = c.ModTime
+	if c.ModTime != nil {
+		modTime = *c.ModTime
 	}
 	_, err = fmt.Fprintf(w, `func %s() (*asset, error) {
 	bytes, err := %sBytes()
