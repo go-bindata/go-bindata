@@ -93,7 +93,7 @@ func parseArgs() *bindata.Config {
 //      /path/to/foo/...    -> (/path/to/foo, true)
 //      /path/to/bar        -> (/path/to/bar, false)
 func parseInput(path string) bindata.InputConfig {
-	if strings.HasSuffix(path, "/...") {
+	if strings.HasSuffix(path, "/...") || strings.HasSuffix(path, "\...") {
 		return bindata.InputConfig{
 			Path:      filepath.Clean(path[:len(path)-4]),
 			Recursive: true,
