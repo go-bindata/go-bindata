@@ -29,7 +29,7 @@ working directory. It includes all assets from the `data` directory.
 
 	$ go-bindata data/
 
-To include all input sub-directories recursively, use the elipsis postfix
+To include all input sub-directories recursively, use the ellipsis postfix
 as defined for Go import paths. Otherwise it will only consider assets in the
 input directory itself.
 
