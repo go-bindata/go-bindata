@@ -26,7 +26,7 @@ to reiterate them.
   external dependencies which may be needed.
 * Where applicable, provide a step-by-step listing of the way to
   reproduce the problem. Make sure this is the simplest possible
-  way to do so. Omit any and all unneccesary steps, because they may
+  way to do so. Omit any and all unnecessary steps, because they may
   just complicate our understanding of the real problem.
   If need be, create a whole new code project on your local machine,
   which specifically tries to create the problem you are running into;
