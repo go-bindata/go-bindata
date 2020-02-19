@@ -133,14 +133,14 @@ func header_compressed_nomemcopy(w io.Writer, c *Config) error {
 	_, err := fmt.Fprintf(w, `%s
 )
 
-func bindataRead(data, name string) ([]byte, error) {
+func bindataRead(data, name string, written int64) ([]byte, error) {
 	gz, err := gzip.NewReader(strings.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("read %%q: %%v", name, err)
 	}
 
 	var buf bytes.Buffer
-	_, err = io.Copy(&buf, gz)
+	_, err = io.CopyN(&buf, gz, written)
 	clErr := gz.Close()
 
 	if err != nil {
@@ -188,14 +188,14 @@ func header_compressed_memcopy(w io.Writer, c *Config) error {
 	_, err := fmt.Fprintf(w, `%s
 )
 
-func bindataRead(data []byte, name string) ([]byte, error) {
+func bindataRead(data []byte, name string, written int64) ([]byte, error) {
 	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
 		return nil, fmt.Errorf("read %%q: %%v", name, err)
 	}
 
 	var buf bytes.Buffer
-	_, err = io.Copy(&buf, gz)
+	_, err = io.CopyN(&buf, gz, written)
 	clErr := gz.Close()
 
 	if err != nil {
@@ -340,7 +340,7 @@ func compressed_nomemcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	}
 
 	gz := gzip.NewWriter(&StringWriter{Writer: w})
-	_, err = io.Copy(gz, r)
+	written, err := io.Copy(gz, r)
 	gz.Close()
 
 	if err != nil {
@@ -353,10 +353,11 @@ func %sBytes() ([]byte, error) {
 	return bindataRead(
 		_%s,
 		%q,
+		%d,
 	)
 }
 
-`, asset.Func, asset.Func, asset.Name)
+`, asset.Func, asset.Func, asset.Name, written)
 	return err
 }
 
@@ -367,7 +368,7 @@ func compressed_memcopy(w io.Writer, asset *Asset, r io.Reader) error {
 	}
 
 	gz := gzip.NewWriter(&StringWriter{Writer: w})
-	_, err = io.Copy(gz, r)
+	written, err := io.Copy(gz, r)
 	gz.Close()
 
 	if err != nil {
@@ -380,10 +381,11 @@ func %sBytes() ([]byte, error) {
 	return bindataRead(
 		_%s,
 		%q,
+		%d,
 	)
 }
 
-`, asset.Func, asset.Func, asset.Name)
+`, asset.Func, asset.Func, asset.Name, written)
 	return err
 }
 
