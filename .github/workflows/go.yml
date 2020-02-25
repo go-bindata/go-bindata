@@ -25,4 +25,7 @@ jobs:
         fi
 
     - name: Build
-      run: go get -u honnef.co/go/tools/cmd/staticcheck && staticcheck ./... && make
+      run: |
+        go get -u honnef.co/go/tools/cmd/staticcheck
+        staticcheck ./...
+        make
