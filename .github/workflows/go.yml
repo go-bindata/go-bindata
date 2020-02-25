@@ -25,6 +25,4 @@ jobs:
             dep ensure
         fi
     - name: Build
-      run: |
-        staticcheck ./...
-        make
+      run: make
