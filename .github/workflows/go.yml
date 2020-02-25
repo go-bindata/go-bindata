@@ -12,6 +12,7 @@ jobs:
       with:
         go-version: 1.13
       id: go
+    - run: go get -u honnef.co/go/tools/cmd/staticcheck
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
@@ -26,5 +27,5 @@ jobs:
         fi
     - name: Build
       run: |
-        golint ./...
+        staticcheck ./...
         make
