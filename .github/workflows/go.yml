@@ -26,8 +26,5 @@ jobs:
 
     - name: Build
       run: |
-        cd ../ && go get honnef.co/go/tools/cmd/staticcheck
-        cd go-bindata
-        echo $GOPATH
-        staticcheck ./...
+        golint ./...
         make
