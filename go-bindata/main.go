@@ -86,7 +86,7 @@ func parseArgs() *bindata.Config {
 	return c
 }
 
-// parseRecursive determines whether the given path has a recrusive indicator and
+// parseRecursive determines whether the given path has a recursive indicator and
 // returns a new path with the recursive indicator chopped off if it does.
 //
 //  ex:

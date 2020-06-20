@@ -29,7 +29,7 @@ working directory. It includes all assets from the `data` directory.
 
 	$ go-bindata data/
 
-To include all input sub-directories recursively, use the elipsis postfix
+To include all input sub-directories recursively, use the ellipsis postfix
 as defined for Go import paths. Otherwise it will only consider assets in the
 input directory itself.
 
@@ -158,7 +158,7 @@ The default behaviour of the program is to use compression.
 
 The keys used in the `_bindata` map, are the same as the input file name
 passed to `go-bindata`. This includes the path. In most cases, this is not
-desireable, as it puts potentially sensitive information in your code base.
+desirable, as it puts potentially sensitive information in your code base.
 For this purpose, the tool supplies another command line flag `-prefix`.
 This accepts a portion of a path name, which should be stripped off from
 the map keys and function names.

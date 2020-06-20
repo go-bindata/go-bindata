@@ -17,7 +17,7 @@ type InputConfig struct {
 	// in the generated output.
 	Path string
 
-	// Recusive defines whether subdirectories of Path
+	// Recursive defines whether subdirectories of Path
 	// should be recursively included in the conversion.
 	Recursive bool
 }
