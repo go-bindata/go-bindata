@@ -211,7 +211,8 @@ func findFiles(dir, prefix string, recursive bool, toc *[]Asset, ignore []*regex
 			return fmt.Errorf("invalid file: %v", asset.Path)
 		}
 
-		asset.Func = safeFunctionName(asset.Name, knownFuncs)
+		asset.Func = safeFunctionName(asset.Name, false, knownFuncs)
+		asset.PubFunc = safeFunctionName(asset.Name, true, knownFuncs)
 		asset.Path, _ = filepath.Abs(asset.Path)
 		*toc = append(*toc, asset)
 	}
@@ -225,9 +226,8 @@ var regFuncName = regexp.MustCompile(`[^a-zA-Z0-9_]`)
 // which qualifies as a valid function identifier. It
 // also compares against a known list of functions to
 // prevent conflict based on name translation.
-func safeFunctionName(name string, knownFuncs map[string]int) string {
+func safeFunctionName(name string, toUpper bool, knownFuncs map[string]int) string {
 	var inBytes, outBytes []byte
-	var toUpper bool
 
 	name = strings.ToLower(name)
 	inBytes = []byte(name)

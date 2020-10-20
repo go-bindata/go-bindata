@@ -356,7 +356,7 @@ func %sBytes() ([]byte, error) {
 	)
 }
 
-`, asset.Func, asset.Func, asset.Name)
+`, asset.PubFunc, asset.Func, asset.Name)
 	return err
 }
 
@@ -383,7 +383,7 @@ func %sBytes() ([]byte, error) {
 	)
 }
 
-`, asset.Func, asset.Func, asset.Name)
+`, asset.PubFunc, asset.Func, asset.Name)
 	return err
 }
 
@@ -407,7 +407,7 @@ func %sBytes() ([]byte, error) {
 	)
 }
 
-`, asset.Func, asset.Func, asset.Name)
+`, asset.PubFunc, asset.Func, asset.Name)
 	return err
 }
 
@@ -433,7 +433,7 @@ func %sBytes() ([]byte, error) {
 	return _%s, nil
 }
 
-`, asset.Func, asset.Func)
+`, asset.PubFunc, asset.Func)
 	return err
 }
 
@@ -468,6 +468,6 @@ func asset_release_common(w io.Writer, c *Config, asset *Asset) error {
 	return a, nil
 }
 
-`, asset.Func, asset.Func, asset.Name, size, mode, modTime)
+`, asset.Func, asset.PubFunc, asset.Name, size, mode, modTime)
 	return err
 }
