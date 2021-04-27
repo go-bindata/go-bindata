@@ -18,7 +18,9 @@ type assetFile struct {
 	childInfoOffset int
 }
 
-type assetOperator struct{}
+type assetOperator struct{
+	root string
+}
 
 // Open implement http.FileSystem interface
 func (f *assetOperator) Open(name string) (http.File, error) {
@@ -26,6 +28,7 @@ func (f *assetOperator) Open(name string) (http.File, error) {
 	if len(name) > 0 && name[0] == '/' {
 		name = name[1:]
 	}
+	name = f.root + name
 	content, err := Asset(name)
 	if err == nil {
 		return &assetFile{name: name, Reader: bytes.NewReader(content)}, nil
@@ -95,6 +98,21 @@ func newDirFileInfo(name string) os.FileInfo {
 // AssetFile return a http.FileSystem instance that data backend by asset
 func AssetFile() http.FileSystem {
 	return &assetOperator{}
+}
+
+// AssetFileSystemForRoot returns a http.FileSystem instance that data backend by assets
+// in a sub-directory
+func AssetFileSystemForRoot(root string) http.FileSystem {
+	for strings.HasPrefix(root, "/") {
+		root = root[1:]
+	}
+	for strings.HasSuffix(root, "/") {
+		root = root[0 : len(root)-1]
+	}
+	root += "/"
+	return &assetOperator{
+		root: root,
+	}
 }
 
 `)
