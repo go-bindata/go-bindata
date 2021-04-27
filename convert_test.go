@@ -8,8 +8,17 @@ import (
 
 func TestSafeFunctionName(t *testing.T) {
 	var knownFuncs = make(map[string]int)
-	name1 := safeFunctionName("foo/bar", knownFuncs)
-	name2 := safeFunctionName("foo_bar", knownFuncs)
+	name1 := safeFunctionName("foo/bar", false, knownFuncs)
+	name2 := safeFunctionName("foo_bar", false, knownFuncs)
+	if name1 == name2 {
+		t.Errorf("name collision")
+	}
+}
+
+func TestSafePublicFunctionName(t *testing.T) {
+	var knownFuncs = make(map[string]int)
+	name1 := safeFunctionName("foo/bar", true, knownFuncs)
+	name2 := safeFunctionName("foo_bar", true, knownFuncs)
 	if name1 == name2 {
 		t.Errorf("name collision")
 	}

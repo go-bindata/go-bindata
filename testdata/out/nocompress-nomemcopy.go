@@ -72,7 +72,7 @@ func (fi bindataFileInfo) Sys() interface{} {
 
 var _inATestAsset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
-func inATestAssetBytes() ([]byte, error) {
+func InATestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inATestAsset,
 		"in/a/test.asset",
@@ -80,7 +80,7 @@ func inATestAssetBytes() ([]byte, error) {
 }
 
 func inATestAsset() (*asset, error) {
-	bytes, err := inATestAssetBytes()
+	bytes, err := InATestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func inATestAsset() (*asset, error) {
 
 var _inBTestAsset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
-func inBTestAssetBytes() ([]byte, error) {
+func InBTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inBTestAsset,
 		"in/b/test.asset",
@@ -100,7 +100,7 @@ func inBTestAssetBytes() ([]byte, error) {
 }
 
 func inBTestAsset() (*asset, error) {
-	bytes, err := inBTestAssetBytes()
+	bytes, err := InBTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func inBTestAsset() (*asset, error) {
 
 var _inCTestAsset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
-func inCTestAssetBytes() ([]byte, error) {
+func InCTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inCTestAsset,
 		"in/c/test.asset",
@@ -120,7 +120,7 @@ func inCTestAssetBytes() ([]byte, error) {
 }
 
 func inCTestAsset() (*asset, error) {
-	bytes, err := inCTestAssetBytes()
+	bytes, err := InCTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func inCTestAsset() (*asset, error) {
 
 var _inTestAsset = "\x2f\x2f\x20\x73\x61\x6d\x70\x6c\x65\x20\x66\x69\x6c\x65\x0a"
 
-func inTestAssetBytes() ([]byte, error) {
+func InTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inTestAsset,
 		"in/test.asset",
@@ -140,7 +140,7 @@ func inTestAssetBytes() ([]byte, error) {
 }
 
 func inTestAsset() (*asset, error) {
-	bytes, err := inTestAssetBytes()
+	bytes, err := InTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}

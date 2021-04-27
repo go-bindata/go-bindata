@@ -82,7 +82,7 @@ func (fi bindataFileInfo) Sys() interface{} {
 
 var _inATestAsset = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xd2\xd7\x57\x28\x4e\xcc\x2d\xc8\x49\x55\x48\xcb\xcc\x49\xe5\x02\x04\x00\x00\xff\xff\x8a\x82\x8c\x85\x0f\x00\x00\x00")
 
-func inATestAssetBytes() ([]byte, error) {
+func InATestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inATestAsset,
 		"in/a/test.asset",
@@ -90,7 +90,7 @@ func inATestAssetBytes() ([]byte, error) {
 }
 
 func inATestAsset() (*asset, error) {
-	bytes, err := inATestAssetBytes()
+	bytes, err := InATestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func inATestAsset() (*asset, error) {
 
 var _inBTestAsset = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xd2\xd7\x57\x28\x4e\xcc\x2d\xc8\x49\x55\x48\xcb\xcc\x49\xe5\x02\x04\x00\x00\xff\xff\x8a\x82\x8c\x85\x0f\x00\x00\x00")
 
-func inBTestAssetBytes() ([]byte, error) {
+func InBTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inBTestAsset,
 		"in/b/test.asset",
@@ -110,7 +110,7 @@ func inBTestAssetBytes() ([]byte, error) {
 }
 
 func inBTestAsset() (*asset, error) {
-	bytes, err := inBTestAssetBytes()
+	bytes, err := InBTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func inBTestAsset() (*asset, error) {
 
 var _inCTestAsset = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xd2\xd7\x57\x28\x4e\xcc\x2d\xc8\x49\x55\x48\xcb\xcc\x49\xe5\x02\x04\x00\x00\xff\xff\x8a\x82\x8c\x85\x0f\x00\x00\x00")
 
-func inCTestAssetBytes() ([]byte, error) {
+func InCTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inCTestAsset,
 		"in/c/test.asset",
@@ -130,7 +130,7 @@ func inCTestAssetBytes() ([]byte, error) {
 }
 
 func inCTestAsset() (*asset, error) {
-	bytes, err := inCTestAssetBytes()
+	bytes, err := InCTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func inCTestAsset() (*asset, error) {
 
 var _inTestAsset = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xd2\xd7\x57\x28\x4e\xcc\x2d\xc8\x49\x55\x48\xcb\xcc\x49\xe5\x02\x04\x00\x00\xff\xff\x8a\x82\x8c\x85\x0f\x00\x00\x00")
 
-func inTestAssetBytes() ([]byte, error) {
+func InTestAssetBytes() ([]byte, error) {
 	return bindataRead(
 		_inTestAsset,
 		"in/test.asset",
@@ -150,7 +150,7 @@ func inTestAssetBytes() ([]byte, error) {
 }
 
 func inTestAsset() (*asset, error) {
-	bytes, err := inTestAssetBytes()
+	bytes, err := InTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}

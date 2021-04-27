@@ -59,12 +59,12 @@ func (fi bindataFileInfo) Sys() interface{} {
 var _inATestAsset = []byte(`// sample file
 `)
 
-func inATestAssetBytes() ([]byte, error) {
+func InATestAssetBytes() ([]byte, error) {
 	return _inATestAsset, nil
 }
 
 func inATestAsset() (*asset, error) {
-	bytes, err := inATestAssetBytes()
+	bytes, err := InATestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -77,12 +77,12 @@ func inATestAsset() (*asset, error) {
 var _inBTestAsset = []byte(`// sample file
 `)
 
-func inBTestAssetBytes() ([]byte, error) {
+func InBTestAssetBytes() ([]byte, error) {
 	return _inBTestAsset, nil
 }
 
 func inBTestAsset() (*asset, error) {
-	bytes, err := inBTestAssetBytes()
+	bytes, err := InBTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -95,12 +95,12 @@ func inBTestAsset() (*asset, error) {
 var _inCTestAsset = []byte(`// sample file
 `)
 
-func inCTestAssetBytes() ([]byte, error) {
+func InCTestAssetBytes() ([]byte, error) {
 	return _inCTestAsset, nil
 }
 
 func inCTestAsset() (*asset, error) {
-	bytes, err := inCTestAssetBytes()
+	bytes, err := InCTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
@@ -113,12 +113,12 @@ func inCTestAsset() (*asset, error) {
 var _inTestAsset = []byte(`// sample file
 `)
 
-func inTestAssetBytes() ([]byte, error) {
+func InTestAssetBytes() ([]byte, error) {
 	return _inTestAsset, nil
 }
 
 func inTestAsset() (*asset, error) {
-	bytes, err := inTestAssetBytes()
+	bytes, err := InTestAssetBytes()
 	if err != nil {
 		return nil, err
 	}
