@@ -108,10 +108,8 @@ func header_compressed_nomemcopy(w io.Writer, c *Config) error {
 	if c.HttpFileSystem {
 		header = `import (
 	"bytes"
-	"compress/gzip"
 	"fmt"
 	"net/http"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -120,9 +118,7 @@ func header_compressed_nomemcopy(w io.Writer, c *Config) error {
 	} else {
 		header = `import (
 	"bytes"
-	"compress/gzip"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -130,10 +126,36 @@ func header_compressed_nomemcopy(w io.Writer, c *Config) error {
 	"time"`
 	}
 
-	_, err := fmt.Fprintf(w, `%s
+	if c.NoUnpack {
+
+		_, err := fmt.Fprintf(w, `%s
+	"reflect"
+	"unsafe"
 )
 
 func bindataRead(data, name string) ([]byte, error) {
+	var empty [0]byte
+	sx := (*reflect.StringHeader)(unsafe.Pointer(&data))
+	b := empty[:]
+	bx := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	bx.Data = sx.Data
+	bx.Len = len(data)
+	bx.Cap = bx.Len
+	return b, nil
+}
+
+`, header)
+		return err
+
+	}
+
+	_, err := fmt.Fprintf(w, `%s
+	"compress/gzip"
+	"io"
+)
+
+func bindataRead(data, name string) ([]byte, error) {
+
 	gz, err := gzip.NewReader(strings.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("read %%q: %%v", name, err)
@@ -163,10 +185,8 @@ func header_compressed_memcopy(w io.Writer, c *Config) error {
 	if c.HttpFileSystem {
 		header = `import (
 	"bytes"
-	"compress/gzip"
 	"fmt"
 	"net/http"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -175,9 +195,7 @@ func header_compressed_memcopy(w io.Writer, c *Config) error {
 	} else {
 		header = `import (
 	"bytes"
-	"compress/gzip"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -185,10 +203,26 @@ func header_compressed_memcopy(w io.Writer, c *Config) error {
 	"time"`
 	}
 
-	_, err := fmt.Fprintf(w, `%s
+	if c.NoUnpack {
+
+		_, err := fmt.Fprintf(w, `%s
 )
 
 func bindataRead(data []byte, name string) ([]byte, error) {
+	return data, nil
+}
+
+`, header)
+		return err
+	}
+
+	_, err := fmt.Fprintf(w, `%s
+	"compress/gzip"
+	"io"
+)
+
+func bindataRead(data []byte, name string) ([]byte, error) {
+
 	gz, err := gzip.NewReader(bytes.NewBuffer(data))
 	if err != nil {
 		return nil, fmt.Errorf("read %%q: %%v", name, err)

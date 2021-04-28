@@ -106,6 +106,10 @@ type Config struct {
 	// the file data when called. Defaults to false.
 	NoCompress bool
 
+	// NoUnpack means the assets are /not/ uncompressed before being turned
+	// into Go code of compress option enabled. Defaults to false.
+	NoUnpack bool
+
 	// HttpFileSystem means whether generate return http.FileSystem interface
 	// instance's function.When true,will generate relate code.
 	HttpFileSystem bool
