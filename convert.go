@@ -57,20 +57,11 @@ func Translate(c *Config) error {
 		return err
 	}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
 	for _, asset := range toc {
-		relative, _ := filepath.Rel(wd, asset.Path)
-		if _, err = fmt.Fprintf(bfd, "// %s\n", filepath.ToSlash(relative)); err != nil {
+		if _, err = fmt.Fprintf(bfd, "// %s\n", filepath.ToSlash(asset.Name)); err != nil {
 			return err
 		}
 	}
-	//if _, err = fmt.Fprint(bfd, "// DO NOT EDIT!\n\n"); err != nil {
-	//	return err
-	//}
 
 	// Write build tags, if applicable.
 	if len(c.Tags) > 0 {
